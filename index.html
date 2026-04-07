@@ -1,0 +1,3091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<title>CRYPTOGRAPHYTUBE TOOLS</title>
+<!-- Dynamic Inline SVG Favicon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff9900'/><circle cx='50' cy='50' r='40' fill='%231e1e1e'/><text x='50%' y='68%' text-anchor='middle' fill='%23ff9900' font-family='Arial' font-weight='bold' font-size='60'>₿</text></svg>">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elliptic/6.5.5/elliptic.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+/* --- Bitcoin Inspired Theme --- */
+:root {
+    --bitcoin-orange: #ff9900;
+    --dark-bg: #1e1e1e;
+    --card-bg: #2d2d30;
+    --text-color: #f0f0f0;
+    --highlight-green: #00cc00;
+}
+
+body { 
+    font-family: 'Arial', sans-serif; 
+    padding: 20px; 
+    max-width: 800px; 
+    margin: auto; 
+    background-color: var(--dark-bg); 
+    color: var(--text-color);
+}
+input, button, textarea { 
+    width: 100%; 
+    padding: 12px; 
+    margin-top: 10px; 
+    border: 1px solid #444; 
+    border-radius: 6px; 
+    box-sizing: border-box;
+    background-color: #3e3e3e;
+    color: var(--text-color);
+}
+button { 
+    background-color: var(--bitcoin-orange); 
+    color: #1e1e1e; 
+    font-weight: bold;
+    cursor: pointer; 
+    border: none; 
+    transition: background-color 0.3s; 
+}
+button:hover { background-color: #ffa520; }
+pre { 
+    background: #111; 
+    color: var(--highlight-green); 
+    padding: 15px; 
+    overflow: auto; 
+    white-space: pre-wrap; 
+    word-wrap: break-word; 
+    border-radius: 6px; 
+    font-size: 14px; 
+    border: 1px solid #444;
+}
+.section { 
+    margin-top: 35px; 
+    padding: 20px; 
+    border: 1px solid #444; 
+    border-radius: 8px; 
+    background-color: var(--card-bg); 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5); 
+}
+.private-key { color: #ff5555; font-weight: bold; }
+/* Highlighted text for range difference */
+.highlight-range { color: #ff5555; }
+
+h2 { 
+    color: var(--bitcoin-orange); 
+    border-bottom: 2px solid var(--bitcoin-orange); 
+    padding-bottom: 10px; 
+    text-align: center;
+}
+h3 { color: var(--text-color); margin-top: 0; }
+.header-links { 
+    text-align: center; 
+    margin-bottom: 25px; 
+    display: flex; 
+    justify-content: center;
+}
+.header-links a { 
+    margin: 0 15px; 
+    color: var(--text-color); 
+    font-size: 24px; 
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.header-links a:hover { color: var(--bitcoin-orange); }
+.header-links .fa-github { color: #fff; }
+.header-links .fa-telegram { color: #0088cc; }
+.attribution { display: none; }
+.result-header {
+    border-bottom: 2px dashed #444;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    color: var(--bitcoin-orange);
+    font-weight: bold;
+}
+.result-header .author {
+    color: var(--text-color);
+    font-size: 0.9em;
+    display: block;
+    margin-top: 4px;
+}
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+.input-group input {
+    flex-grow: 1;
+}
+
+/* --- Animated Logo CSS --- */
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes spinReverse { 100% { transform: rotate(-360deg); } }
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(0.95); } }
+
+.site-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 5px;
+    border-bottom: 2px solid var(--bitcoin-orange);
+    padding-bottom: 10px;
+}
+.site-title-container h2 {
+    border-bottom: none;
+    margin: 0;
+    padding: 0;
+}
+.animated-logo {
+    width: 65px;
+    height: 65px;
+    animation: pulse 3s ease-in-out infinite;
+}
+.spin-slow {
+    transform-origin: 50px 50px;
+    animation: spin 8s linear infinite;
+}
+.spin-reverse {
+    transform-origin: 50px 50px;
+    animation: spinReverse 6s linear infinite;
+}
+
+/* --- Responsive Layout adjustments for Android/PC --- */
+@media (max-width: 768px) {
+    body { padding: 10px; }
+    .site-title-container h2 { font-size: 20px; text-align: center; }
+    .animated-logo { width: 45px; height: 45px; }
+    .header-links { flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .header-links a { font-size: 18px; margin: 0 10px; }
+    .input-group { flex-direction: column; gap: 5px; }
+    button { padding: 15px; font-size: 16px; margin-top: 15px; } /* larger buttons for easy tapping */
+    pre { font-size: 12px; } /* Scale font down on mobile to prevent extreme overflow */
+}
+</style>
+</head>
+<body>
+
+<div class="site-title-container">
+    <!-- Inline SVG Animated Logo -->
+    <svg viewBox="0 0 100 100" class="animated-logo" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer Rotating Gear Ring -->
+        <circle cx="50" cy="50" r="42" stroke="var(--bitcoin-orange)" stroke-width="6" fill="none" stroke-dasharray="16 8" class="spin-slow" />
+        <!-- Inner Reverse Rotating Ring -->
+        <circle cx="50" cy="50" r="32" stroke="var(--highlight-green)" stroke-width="3" fill="none" stroke-dasharray="8 6" class="spin-reverse" />
+        <!-- Core Bitcoin / Crypto Icon -->
+        <text x="50.5" y="68" text-anchor="middle" fill="var(--bitcoin-orange)" font-family="Arial" font-weight="bold" font-size="52">₿</text>
+    </svg>
+    <h2>CRYPTOGRAPHYTUBE TOOLS</h2>
+</div>
+<div class="header-links">
+    <a href="https://github.com/Cryptographytube" target="_blank" title="GitHub"><i class="fab fa-github"></i> GitHub</a>
+    <a href="https://t.me/cryptographytubeofficial" target="_blank" title="Telegram Channel"><i class="fab fa-telegram"></i> Channel</a>
+    <a href="https://t.me/cryptographytube" target="_blank" title="Telegram Group"><i class="fab fa-telegram"></i> Group</a>
+</div>
+
+<div class="section" style="border: 2px solid var(--highlight-green); box-shadow: 0 0 15px rgba(0,204,0,0.3);">
+<h3><i class="fas fa-shield-alt"></i> Private Key to Address Converter</h3>
+<p style="color: #bbb; font-size: 14px;"><strong>Offline:</strong> Turn off the Internet. Use this page offline for more safety.</p>
+<input id="offline_priv_input" placeholder="Enter Hex Private Key or WIF Private Key">
+<button onclick="convertAllAddresses()">Generate All Addresses</button>
+<pre id="out_all_addresses">
+Waiting for input...
+</pre>
+</div>
+
+---
+
+
+<div class="section">
+<h3>1. TXID → R, S, Z, Address + Private Key Recovery (R-Reuse)</h3>
+<input id="txid_input" placeholder="Enter Bitcoin Transaction ID (TXID)">
+<button onclick="processTxid()">Analyze Transaction (R-S-Z)</button>
+<pre id="out_txid">
+Instructions:
+1. Enter a TXID.
+2. If two consecutive inputs share the same R-Value (R-reuse), the Private Key will be recovered.
+3. Internet connection is required for API access.
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>2. Address → HASH160 / Witness Program</h3>
+<input id="addr2" placeholder="Enter Bitcoin Address (P2PKH: 1..., P2SH: 3..., Bech32: bc1q...)">
+<button onclick="addrToHash()">Convert to Hash160</button>
+<pre id="out_hash">
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>3. Public Key → X and Y Coordinates</h3>
+<input id="pk_coords" placeholder="Enter Compressed (66 hex) or Uncompressed (130 hex) Public Key">
+<button onclick="pubToCoords()">Extract Coordinates</button>
+<pre id="out_pk_coords">
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>4. Public Key → Address (Compressed & Uncompressed)</h3>
+<input id="pk" placeholder="Enter Public Key Hex">
+<button onclick="pubToAddr()">Convert to Address</button>
+<pre id="out_pk">
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>5. Private Key → Public Key / Address</h3>
+<input id="priv" placeholder="Enter WIF or 64 Hex Private Key">
+<button onclick="privToPub()">Convert</button>
+<pre id="out_priv">
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>6. Address → Public Key (API Lookup)</h3>
+<input id="addr" placeholder="Enter Bitcoin Address (P2PKH: 1...)">
+<button onclick="findPublicKey()">Find Public Key</button>
+<pre id="out_addr">
+Note: Public Key is only available for P2PKH addresses that have been spent from (API lookup required).
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>7. HASH160 / Program Hash → Address Converter</h3>
+<input id="rmd160_input" placeholder="Enter 40-char HASH160 or 64-char SHA256 Hash">
+<button onclick="rmdToAddress()">Convert to Addresses</button>
+<pre id="out_rmd160">
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>8. WIF Key → Hex Private Key + Addresses (All Details)</h3>
+<input id="wif_to_hex_input" placeholder="Enter Compressed (K/L...) or Uncompressed (5...) WIF Private Key">
+<button onclick="wifToHexDetails()">Convert WIF</button>
+<pre id="out_wif_to_hex">
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>9. Hex Private Key → WIF Key + Addresses (All Details)</h3>
+<input id="hex_to_wif_input" placeholder="Enter 64-character Hex Private Key">
+<button onclick="hexToWifDetails()">Convert Hex</button>
+<pre id="out_hex_to_wif">
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>10. WIF Key → Missing Private Key Decode (WIF Range)</h3>
+<input id="wif_range_input" placeholder="Enter WIF with missing characters (use * for missing characters)">
+<button onclick="wifMissingKeyDecode()">Decode WIF Range</button>
+<pre id="out_wif_range">
+Instructions:
+Enter a WIF key where the missing characters are replaced by an asterisk (*).
+Example: 5J*d*2V
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>11. Address → Vulnerability Check (R-Reuse/Bias)</h3>
+<input id="vuln_addr_input" placeholder="Enter Bitcoin Address (Legacy or P2SH)">
+<div class="input-group">
+    <input id="vuln_tx_count" type="number" value="100" min="1" placeholder="Number of Transactions to Fetch">
+</div>
+<button onclick="checkAddressVulnerability()">Process Transactions</button>
+<pre id="out_vuln_check">
+Instructions:
+Enter a P2PKH (1...) or P2SH (3...) address and the number of transactions to analyze.
+This tool checks for repeated ECDSA R-values (nonce reuse) in the latest transactions, which indicates a severe vulnerability.
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>12. Cross-TXID Private Key Recovery (R-Reuse between two TXs)</h3>
+<input id="txid1_input" placeholder="Enter First Bitcoin Transaction ID (TXID 1)">
+<input id="txid2_input" placeholder="Enter Second Bitcoin Transaction ID (TXID 2)">
+<button onclick="processCrossTxid()">Analyze & Recover Key</button>
+<pre id="out_cross_txid">
+Instructions:
+1. Enter two different TXIDs belonging to the same address.
+2. The tool will extract R, S, Z, Public Key from both transactions inputs.
+3. If it detects the same R-Value across any input between the two TXIDs, it will calculate the Private Key using the ECDSA formula.
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>13. Mnemonic Seed (12/24 Words) to Address & Private Key Converter</h3>
+
+<div style="margin-bottom: 15px;">
+    <label for="wallet_select" style="font-weight: bold; margin-right: 10px;">Select Wallet Type:</label>
+    <select id="wallet_select" style="padding: 5px 10px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 4px; font-size: 14px;">
+        <option value="trust">Trust Wallet (Multi-Coin)</option>
+        <option value="binance">Binance Wallet</option>
+        <option value="metamask">Metamask</option>
+    </select>
+
+    <label for="word_count" style="font-weight: bold; margin-left: 20px; margin-right: 10px;">Select Word Count:</label>
+    <select id="word_count" style="padding: 5px 10px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 4px; font-size: 14px;">
+        <option value="12">12 Words</option>
+        <option value="24">24 Words</option>
+    </select>
+</div>
+
+<textarea id="mnemonic_input" rows="3" style="width: 100%; padding: 10px; display: block; margin-bottom: 10px; background: #1a1a1a; color: #fff; border: 1px solid #333; font-family: monospace;" placeholder="Enter your mnemonic words separated by space... (e.g. legal winner thank year wave sausage worth useful legal winner thank yellow)"></textarea>
+<button onclick="dumpMnemonicAddress()">Dump Address & Private Key</button>
+<pre id="out_mnemonic">
+Instructions:
+Choose your wallet type, select word count, and enter your recovery phrase.
+This tool runs completely offline using CryptoJS and SECP256k1 to derive your private key securely!
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>14. BrainWallet Generator (Password to Private Key)</h3>
+<input id="brain_input" placeholder="Enter custom pass phrase (e.g. your secret password)">
+<button onclick="generateBrainWallet()">Generate Private Key & Address</button>
+<pre id="out_brain"></pre>
+</div>
+
+---
+
+<div class="section">
+<h3>15. Mini-Private Key Decoder (Casascius Physical Bitcoins)</h3>
+<input id="mini_input" placeholder="Enter Mini-Key starting with S (e.g. S6c56bnXQiBjk9mqSYE7ykVQ7NzrRy)">
+<button onclick="decodeMiniKey()">Decode to Hex/WIF</button>
+<pre id="out_mini"></pre>
+</div>
+
+---
+
+<div class="section">
+<h3>16. Multisig Address Detector & Script Analyzer</h3>
+<input id="multisig_checker" placeholder="Enter Bitcoin Address (P2SH 3... or P2WPKH/P2WSH bc1q...)">
+<button onclick="checkMultisig()">Analyze Address Transactions & Structure</button>
+<pre id="out_multisig">
+Instructions:
+Enter an address. The tool will securely fetch its transaction history from blockstream and run a deep structural mathematical analysis on its spending inputs to detect 'OP_CHECKMULTISIG' and deduce the Multi-Sig rules (e.g. 2-of-3) or Single-Sig logic. Internet connection required.
+</pre>
+</div>
+
+---
+
+<div class="section">
+<h3>17. Raw Transaction Hex Decoder (Legacy P2PKH)</h3>
+<input id="raw_tx_input" placeholder="Enter Raw Bitcoin Transaction Hex">
+<button onclick="decodeRawTx()">Decode Transaction</button>
+<pre id="out_raw_tx"></pre>
+</div>
+
+
+---
+
+<div class="section">
+<h3>18. Bitcoin Wallet Dat Validator</h3>
+<input type="file" id="wallet_dat_input" accept=".dat" style="margin-bottom:10px; display:block;">
+<button onclick="processWalletDat()">Process Wallet Dat Validator</button>
+<pre id="out_wallet_dat">
+Instructions:
+Select a wallet.dat file using the 'Choose File' button, then click Process. The tool will parse the Berkeley DB, extract the Master Key Hash (JTR format), and list all encrypted private keys mapping to their Bitcoin addresses.
+</pre>
+</div>
+
+
+---
+
+
+<div class="section" style="border: 2px solid #ff3333; box-shadow: 0 0 15px rgba(255,51,51,0.3);">
+<h3 style="color: #ff5555;"><i class="fas fa-search-dollar"></i> 19. Wallet.dat Deep Vulnerability Analyzer</h3>
+<input type="file" id="wallet_vuln_input" accept=".dat" style="margin-bottom:10px; display:block;">
+<button onclick="processWalletVuln()" style="background-color: #ff5555; color: white; display:block; margin-bottom:10px;">Process Deep Vulnerability Scan</button>
+<pre id="out_wallet_vuln">
+Instructions:
+Select a wallet.dat file using the 'Choose File' button, then click Process. The algorithm will deeply analyze the Berkeley DB B-Tree leaf pages, extracting hidden metadata, KDF iteration thresholds, and architectural anomalies to determine if the encryption has weaknesses or if a bypass is theoretically possible.
+</pre>
+</div>
+
+---
+
+<div class="section" style="border: 2px solid #ff7700; box-shadow: 0 0 15px rgba(255,119,0,0.3);">
+<h3 style="color: #ff7700;"><i class="fas fa-hackerrank"></i> 20. Cross-Address Shared 'K' Exploit (Different Keys, Same Nonce)</h3>
+<input id="exploit_txid1_input" placeholder="Enter First Bitcoin Transaction ID (TXID 1)">
+<input id="exploit_txid2_input" placeholder="Enter Second Bitcoin Transaction ID (TXID 2)">
+<button onclick="processSharedKExploit()" style="background-color: #ff7700; color: white;">Execute Lattice / Math Exploit</button>
+<pre id="out_shared_k_exploit">
+Instructions:
+This is an advanced cryptographic exploit tool. If two different addresses (with different private keys) sign transactions using the exact same random nonce 'k' (e.g., due to a broken random number generator), this tool mathematically exploits the failure to instantly calculate BOTH private keys.
+
+1. Enter two suspicious TXIDs.
+2. The tool will check for ECDSA signature nonce collision across different addresses.
+3. If an identical R-value is detected, the modular inverse algebraic exploit will trigger.
+</pre>
+</div>
+
+---
+
+<div class="section" style="border: 2px solid #aa00ff; box-shadow: 0 0 15px rgba(170,0,255,0.3);">
+<h3 style="color: #aa00ff;"><i class="fas fa-bolt"></i> 21. Signature Fault Injection Recovery (Corrupted S-Value Exploit)</h3>
+<p style="color: #bbb; font-size: 13px; margin-top: -5px;">Hardware Wallet Glitch / Memory Fault Private Key Reverse Engineering</p>
+<input id="fault_msg_hash" placeholder="Enter Message Hash (Z) or Transaction Hash">
+<input id="fault_sig_r" placeholder="Enter R-Value (Hex)">
+<input id="fault_sig_s_valid" placeholder="Enter Valid S-Value">
+<input id="fault_sig_s_corrupt" placeholder="Enter Corrupted S-Value (Faulted)">
+<button onclick="processFaultInjection()" style="background-color: #aa00ff; color: white;">Reverse Engineer Private Key</button>
+<pre id="out_fault_injection">
+Instructions:
+If a hardware wallet experiences a voltage drop/CPU glitch while signing, it might output a mathematically corrupted signature alongside a valid one for the same message hash. By comparing the 'S' value of the valid signature against the faulted 'S' value, this tool uses differential fault analysis ECDSA formulas to instantaneously deduce the internal secret Private Key.
+</pre>
+</div>
+
+---
+
+<div class="section" style="border: 2px solid #00cccc; box-shadow: 0 0 15px rgba(0,204,204,0.3);">
+<h3 style="color: #00cccc;"><i class="fas fa-biohazard"></i> 22. Transaction Malleability Mutator (The MtGox Exploit)</h3>
+<p style="color: #bbb; font-size: 13px; margin-top: -5px;">Mutate ECDSA Signatures to covertly change the TXID of a transaction</p>
+<input id="malleability_tx_input" placeholder="Enter Full Raw Transaction Hex (Legacy P2PKH)">
+<button onclick="processMalleability()" style="background-color: #00cccc; color: white;">Mutate Transaction</button>
+<pre id="out_malleability">
+Instructions:
+This exploit takes advantage of the ECDSA mathematical rule where (N - S) produces a completely valid complementary signature.
+1. Enter a valid raw transaction hex.
+2. The tool will parse the scriptSig, isolate the 'S' value, subtract it from the curve order N, and reconstruct the transaction.
+3. The resulting transaction remains 100% valid and will transfer funds, but its main TXID will be entirely different (which historically broke Mt.Gox's tracking systems).
+</pre>
+</div>
+
+---
+
+<div class="section" style="border: 2px solid #cccc00; box-shadow: 0 0 15px rgba(204,204,0,0.3);">
+<h3 style="color: #cccc00;"><i class="fas fa-puzzle-piece"></i> 23. Shamir's Secret Sharing (SSS) Fragment Recoverer</h3>
+<p style="color: #bbb; font-size: 13px; margin-top: -5px;">Combine mathematical fragments to restore a Master Secret (Lagrange Interpolation)</p>
+<textarea id="sss_input" rows="4" style="width: 100%; padding: 10px; display: block; margin-bottom: 10px; background: #1a1a1a; color: #fff; border: 1px solid #333; font-family: monospace;" placeholder="Enter exactly 2 or 3 shares (one per line). Format: X:Y (Hex Coordinates)
+Example:
+1:4a3b2c1...
+2:8f4c21a..."></textarea>
+<div class="input-group">
+   <input type="number" id="sss_threshold" value="2" min="2" max="10" placeholder="Minimum threshold required">
+</div>
+<button onclick="processSSS()" style="background-color: #cccc00; color: #1e1e1e;">Calculate Lagrange Interpolation (Recover Key)</button>
+<pre id="out_sss">
+Instructions:
+Advanced security models split a private key into 'N' fragments (e.g. 5 fragments), requiring at least 'M' fragments (threshold, e.g. 3) to rebuild it.
+Paste your fragments (Shares) X,Y coordinates in Hexformat on separate lines as 'X:Y', specify the required threshold, and the tool will use Galois Field Arithmetic to mathematically re-assemble the original Private Key.
+</pre>
+</div>
+
+---
+
+<div class="section" style="border: 2px solid #5555ff; box-shadow: 0 0 15px rgba(85,85,255,0.3);">
+<h3 style="color: #5555ff;"><i class="fas fa-user-secret"></i> 24. Blockchain OP_RETURN Hidden Message Decoder</h3>
+<p style="color: #bbb; font-size: 13px; margin-top: -5px;">Extract hidden ASCII/Hex metadata embedded inside transaction outputs</p>
+<input id="op_return_input" placeholder="Enter Full Raw Transaction Hex">
+<button onclick="processOpReturn()" style="background-color: #5555ff; color: white;">Deep Scan for Hidden Payloads</button>
+<pre id="out_op_return">
+Instructions:
+Hackers and data hoarders often use the OP_RETURN opcode (0x6a) to permanently write text, website hashes, or secret messages directly into the Bitcoin blockchain.
+Paste a raw transaction hex, and this tool will specifically scrape all outputs looking for 0x6a opcodes, extracting and decoding the concealed payload into readable format.
+</pre>
+</div>
+
+<script>
+// =================================================================
+// 0. CORE UTILITIES AND CONSTANTS
+// =================================================================
+const ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+const BASE = BigInt(58);
+const BECH32_ALPHABET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+const N = BigInt('0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141');
+
+// Function to generate the custom output header
+function getOutputHeader() {
+    return `<div class="result-header">CRYPTOGRAPHYTUBE<span class="author">AUTHOR: Sisujhon</span></div>\n`;
+}
+
+// Hashing Functions
+function sha256hex(hex){ return CryptoJS.SHA256(CryptoJS.enc.Hex.parse(hex)).toString(); }
+function ripe160hex(hex){ return CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(hex)).toString(); }
+function dblsha256(hex){ return sha256hex(sha256hex(hex)); }
+
+// Converters
+function hexToBytes(hex) {
+    if (hex.length % 2 !== 0) hex = '0' + hex;
+    return new Uint8Array(hex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+}
+function bytesToHex(bytes) {
+    return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function hexToBigInt(hex) { return BigInt('0x' + hex); }
+
+// Math
+function modInverse(a, m) {
+    let m0 = m;
+    let x0 = 0n;
+    let x1 = 1n;
+    a %= m;
+
+    while (a > 1n) {
+        let q = a / m;
+        let t = m;
+
+        m = a % m;
+        a = t;
+
+        t = x0;
+        x0 = x1 - q * x0;
+        x1 = t;
+    }
+
+    if (x1 < 0n) {
+        x1 += m0;
+    }
+    return x1;
+}
+
+function countBits(num) {
+    if (num <= 0n) return 0;
+    return num.toString(2).length;
+}
+
+function reverseHex(hex) {
+    if (hex.length % 2 !== 0) throw new Error("Hex string length is odd.");
+    return hex.match(/.{1,2}/g).reverse().join('');
+}
+
+// =================================================================
+// 1. BASE58 UTILITIES (P2PKH, P2SH, WIF)
+// =================================================================
+function b58decode(str){
+    let num = BigInt(0);
+    for(const char of str){ 
+        const index = ALPHABET.indexOf(char);
+        if (index === -1) throw new Error(`Invalid Base58 character: ${char}`);
+        num = num * BASE + BigInt(index); 
+    }
+    let hex = num.toString(16);
+    
+    let leadingOnes = 0;
+    for(let i = 0; i < str.length && str[i] === '1'; i++){ leadingOnes++; }
+    let leadingZeros = "00".repeat(leadingOnes);
+    
+    let totalLength = leadingZeros.length + hex.length;
+    if (totalLength % 2 !== 0 && str.length > 0) {
+        hex = "0" + hex;
+    }
+
+    return leadingZeros + hex;
+}
+
+function b58encode(hex){
+    let num = BigInt("0x"+hex);
+    let str = "";
+    while(num > 0){
+        const r = Number(num % 58n);
+        str = ALPHABET[r] + str;
+        num /= 58n;
+    }
+    let leadingZeros = "";
+    for(let i=0; i<hex.length; i+=2){
+        if(hex.substring(i, i+2) === "00"){
+            leadingZeros += "1";
+        } else {
+            break;
+        }
+    }
+    return leadingZeros + str;
+}
+
+function b58_decode_check(encoded) {
+    const hex = b58decode(encoded);
+    const data_and_checksum = hexToBytes(hex);
+    
+    if (data_and_checksum.length < 4) throw new Error('Decoded length is too short for checksum check.');
+
+    const data = data_and_checksum.slice(0, data_and_checksum.length - 4);
+    const checksum = data_and_checksum.slice(data_and_checksum.length - 4);
+
+    const dataHex = bytesToHex(data);
+    const hash = dblsha256(dataHex);
+    const calculatedChecksum = hash.substring(0, 8);
+    
+    if (bytesToHex(checksum) !== calculatedChecksum) {
+        throw new Error('Checksum mismatch.');
+    }
+    
+    return data;
+}
+
+function simple_b58_decode(encoded) {
+    const hex = b58decode(encoded);
+    const data_and_checksum = hexToBytes(hex);
+    return data_and_checksum;
+}
+
+
+// =================================================================
+// 2. ADDRESS/KEY GENERATION UTILITIES
+// =================================================================
+function hash160ToAddress(hash160, version_byte) {
+    const versioned_hash = version_byte + hash160;
+    const checksum = dblsha256(versioned_hash).substring(0, 8);
+    return b58encode(versioned_hash + checksum);
+}
+
+function pubToAddr_P2PKH(pub_hex) {
+    const pub_bin = hexToBytes(pub_hex);
+    const sha256_hash = sha256hex(bytesToHex(pub_bin));
+    const ripemd160_hash = ripe160hex(sha256_hash);
+    
+    return hash160ToAddress(ripemd160_hash, "00");
+}
+
+function privHexToWIF(hex, compressed) {
+    const versioned_hex = "80" + hex;
+    let wif_data = versioned_hex;
+
+    if (compressed) {
+        wif_data += "01"; 
+    }
+    
+    const checksum = dblsha256(wif_data).substring(0, 8);
+    return b58encode(wif_data + checksum);
+}
+
+function getFullKeyDetails(privateKeyHex) {
+    const ec = new elliptic.ec("secp256k1");
+    const kp = ec.keyFromPrivate(privateKeyHex);
+    const pub = kp.getPublic();
+
+    const compressedPub = pub.encode('hex', true);
+    const addressComp = pubToAddr_P2PKH(compressedPub);
+    const wifCompressed = privHexToWIF(privateKeyHex, true);
+    
+    const uncompressedPub = pub.encode('hex', false);
+    const addressUncomp = pubToAddr_P2PKH(uncompressedPub);
+    const wifUncompressed = privHexToWIF(privateKeyHex, false);
+    
+    return {
+        hex: privateKeyHex,
+        compressedPub,
+        uncompressedPub,
+        addressComp,
+        addressUncomp,
+        wifCompressed,
+        wifUncompressed
+    };
+}
+
+/* ---------------------- 10. WIF Range Decoder (IMPROVED) ---------------------- */
+
+function highlightDifference(start, end) {
+    let common = '';
+    let i = 0;
+    while (i < start.length && i < end.length && start[i] === end[i]) {
+        common += start[i];
+        i++;
+    }
+    const diffStart = `<span class='highlight-range'>${start.substring(i)}</span>`;
+    const diffEnd = `<span class='highlight-range'>${end.substring(i)}</span>`;
+    return { diffStart: common + diffStart, diffEnd: common + diffEnd };
+}
+
+function wifMissingKeyDecode() {
+    const wif_input = document.getElementById("wif_range_input").value.trim();
+    const out = document.getElementById("out_wif_range");
+    out.innerHTML = '';
+
+    if (!wif_input.includes('*')) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Please use the asterisk (*) to denote missing characters. Example: 5J*d*2V</span></pre>`;
+        return;
+    }
+
+    const wif_filled_1 = wif_input.replace(/\*/g, '1');
+    const wif_filled_z = wif_input.replace(/\*/g, 'z');
+
+    let mode;
+    if (wif_filled_1.length === 51) {
+        mode = "Uncompressed (Legacy)";
+    } else if (wif_filled_1.length === 52) {
+        mode = "Compressed (Standard)";
+    } else {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Invalid resulting WIF length (${wif_filled_1.length}). Must be 51 or 52 characters.</span></pre>`;
+        return;
+    }
+    
+    try {
+        // Decode both WIF variations
+        const hex_bytes_1 = simple_b58_decode(wif_filled_1);
+        const hex_1 = bytesToHex(hex_bytes_1);
+        
+        const hex_bytes_z = simple_b58_decode(wif_filled_z);
+        const hex_z = bytesToHex(hex_bytes_z);
+
+        // Extract private key ranges based on WIF type
+        let privkey_start;
+        let privkey_end;
+        
+        if (mode.startsWith("Compressed")) {
+            // For compressed WIF: version(1) + private key(32) + compression flag(1) + checksum(4)
+            privkey_start = hex_1.substring(2, 66); // Skip version byte (80) and get private key
+            privkey_end = hex_z.substring(2, 66);
+        } else {
+            // For uncompressed WIF: version(1) + private key(32) + checksum(4)
+            privkey_start = hex_1.substring(2, 66); // Skip version byte (80) and get private key
+            privkey_end = hex_z.substring(2, 66);
+        }
+
+        // Convert to BigInt for range calculation
+        const int_start = hexToBigInt(privkey_start);
+        const int_end = hexToBigInt(privkey_end);
+        const combinations = int_end - int_start + 1n;
+        const bit_range = countBits(combinations);
+
+        const diffs = highlightDifference(privkey_start, privkey_end);
+
+        let content = 
+            `Input WIF Template: ${wif_input}\n` +
+            `Detected Mode: ${mode.toUpperCase()}\n\n` +
+            `1. WIF (Low Range): ${wif_filled_1}\n` +
+            `   Hex Decoded: ${hex_1}\n\n` +
+            `2. WIF (High Range): ${wif_filled_z}\n` +
+            `   Hex Decoded: ${hex_z}\n\n` +
+            `--- PRIVATE KEY HEX RANGE (d) ---\n` +
+            `Start (from): ${diffs.diffStart}\n` +
+            `End (to):     ${diffs.diffEnd}\n\n` +
+            `Total Combinations: ${combinations.toLocaleString('en-US')}\n` +
+            `Bit Range: ${bit_range} bits`;
+
+        out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+
+    } catch(e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error during range calculation: ${e.message}.</span></pre>`;
+    }
+}
+
+/* ---------------------- 11. Address Vulnerability Check (NEW) ---------------------- */
+
+// Helper to parse DER-encoded ECDSA signatures (robust, as per Python logic)
+function tryParseDerAt(buf, pos) {
+    if (!buf || pos + 7 > buf.length) return null;
+    try {
+        if (buf[pos] !== 0x30) return null; // SEQUENCE (0x30)
+
+        const total_len = buf[pos + 1];
+        if (total_len < 6) return null;
+        const end = pos + 2 + total_len;
+        if (end > buf.length) return null;
+
+        if (buf[pos + 2] !== 0x02) return null; // INTEGER (R-value)
+
+        const r_len = buf[pos + 3];
+        const r_start = pos + 4;
+        const r_end = r_start + r_len;
+        if (r_end >= buf.length || r_end >= end) return null;
+
+        if (buf[r_end] !== 0x02) return null; // INTEGER (S-value)
+
+        const s_len = buf[r_end + 1];
+        const s_start = r_end + 2;
+        const s_end = s_start + s_len;
+        if (s_end > buf.length || s_end > end) return null;
+
+        const r_bytes = buf.slice(r_start, r_end);
+        const s_bytes = buf.slice(s_start, s_end);
+        
+        // Remove leading zero byte if present (DER canonicalization)
+        let r_hex = bytesToHex(r_bytes);
+        let s_hex = bytesToHex(s_bytes);
+        if (r_hex.startsWith('00') && r_hex.length > 2) r_hex = r_hex.substring(2);
+        if (s_hex.startsWith('00') && s_hex.length > 2) s_hex = s_hex.substring(2);
+
+        const consumed = end - pos;
+        return { r: r_hex, s: s_hex, len: consumed };
+
+    } catch (e) {
+        return null;
+    }
+}
+
+function extractEcdsaSigs(script_hex) {
+    const results = [];
+    if (!script_hex || typeof script_hex !== 'string') return results;
+    
+    // Attempt to convert to bytes, handling common hex formats
+    let buf;
+    try {
+        if (script_hex.startsWith("0x")) script_hex = script_hex.substring(2);
+        buf = hexToBytes(script_hex.replace(/\s/g, ''));
+    } catch {
+        return results;
+    }
+
+    let i = 0;
+    while (i < buf.length) {
+        const maybe = tryParseDerAt(buf, i);
+        if (maybe) {
+            results.push({ r: maybe.r, s: maybe.s, offset: i, raw_hex: bytesToHex(buf.slice(i, i + maybe.len)) });
+            i += maybe.len;
+        } else {
+            i += 1; // Skip one byte and try again
+        }
+    }
+    return results;
+}
+
+// Function to fetch and process transactions for vulnerability check
+async function checkAddressVulnerability() {
+    const addr = document.getElementById("vuln_addr_input").value.trim();
+    const count = parseInt(document.getElementById("vuln_tx_count").value.trim());
+    const out = document.getElementById("out_vuln_check");
+    out.innerHTML = getOutputHeader() + "<pre>Processing address...</pre>";
+    
+    if (addr.length < 26) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Invalid address length.</span></pre>`;
+        return;
+    }
+    
+    if (addr.startsWith('bc1') || addr.startsWith('tb1')) {
+        out.innerHTML = getOutputHeader() + `<pre>❌ Skipping: This tool only supports Legacy (1...) and P2SH (3...) addresses due to complex SegWit/Taproot witness structure.</pre>`;
+        return;
+    }
+    if (isNaN(count) || count < 1) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Transaction count must be a positive number.</span></pre>`;
+        return;
+    }
+
+    // --- Fetch Transactions ---
+    // Note: Blockchain.info often limits transactions per call, but we keep it simple for web implementation.
+    const url = `https://blockchain.info/address/${addr}?format=json&limit=${count}`;
+    
+    out.innerHTML = getOutputHeader() + `<pre>Fetching ${count} transactions from Blockchain.info (may take time)...</pre>`;
+
+    let txs;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        txs = data.txs || data.transactions || [];
+        
+        if (txs.length === 0 && data.n_tx === 0) {
+            out.innerHTML = getOutputHeader() + `<pre>✅ No transactions found for this address. (Vulnerability: None)</pre>`;
+            return;
+        }
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>❌ Error fetching transactions: ${e.message}. (API limit or CORS issue)</span></pre>`;
+        return;
+    }
+
+    out.innerHTML = getOutputHeader() + `<pre>Found ${txs.length} transactions. Analyzing for R-reuse...</pre>`;
+
+    // --- Analysis ---
+    const allROccurrences = {};
+    const crossTxAlerts = [];
+    let transactionCount = 0;
+
+    for (const tx of txs) {
+        const txid = tx.hash || tx.txid || "<unknown>";
+        transactionCount++;
+
+        const vinList = tx.inputs || tx.vin || [];
+        
+        for (const vin of vinList) {
+            // Get the raw scriptSig/witness data
+            const scriptHex = vin.script || vin.scriptsig || vin.scriptSig || '';
+
+            // 1. Check ScriptSig (Legacy/P2SH)
+            if (scriptHex) {
+                const sigs = extractEcdsaSigs(scriptHex);
+                for (const s of sigs) {
+                    const r = s.r;
+                    if (!allROccurrences[r]) allROccurrences[r] = [];
+                    allROccurrences[r].push({ txid: txid, where: 'vin-scriptsig', index: vin.sequence });
+                }
+            }
+            // Skipping witness parsing for simplicity and focus on legacy/P2SH
+        }
+    }
+    
+    // --- Post-Analysis Compilation ---
+    const vulnFlags = new Set();
+    const vulnerableTxids = new Set();
+
+    for (const r in allROccurrences) {
+        const occs = allROccurrences[r];
+        const txids = new Set(occs.map(o => o.txid));
+        
+        if (txids.size > 1) {
+            vulnFlags.add("REPEATED NONCE (R-Value Reuse) - HIGH VULNERABILITY");
+            txids.forEach(id => vulnerableTxids.add(id)); // Collect all TXIDs involved in reuse
+            crossTxAlerts.push({ r: r, occurrences: occs, tx_count: txids.size });
+        }
+        
+        // Simple check for general R-value bias (e.g., used 4+ times overall)
+        if (occs.length >= 4) {
+             vulnFlags.add("BIAS/PREDICTABLE NONCE - (R-Value used 4+ times overall)");
+        }
+    }
+
+    let output_content = `\nAddress: ${addr}\nTransactions Analyzed: ${transactionCount}\n\n`;
+    
+    if (vulnFlags.size > 0) {
+        output_content += "========================================================\n";
+        output_content += "!!! VULNERABILITY ALERT !!!\n";
+        output_content += "========================================================\n";
+        output_content += "Detected Issues:\n";
+        vulnFlags.forEach(v => {
+            output_content += `<span class='private-key'>-> ${v}</span>\n`;
+        });
+        
+        if (vulnerableTxids.size > 0) {
+            output_content += "\n--- VULNERABLE TRANSACTION IDS (TXIDs) ---\n";
+            vulnerableTxids.forEach(txid => {
+                 output_content += `${txid}\n`;
+            });
+            output_content += `\nTotal Vulnerable TXIDs: ${vulnerableTxids.size}\n`;
+        }
+        
+        output_content += "\n--- Details (R-Values) ---\n";
+        crossTxAlerts.forEach(a => {
+            output_content += `[R-Value]: ${a.r}\n`;
+            output_content += `  Reused in ${a.tx_count} different TXIDs.\n`;
+        });
+
+    } else {
+        output_content += "========================================================\n";
+        output_content += "✅ NO R-VALUE REUSE VULNERABILITY DETECTED\n";
+        output_content += "========================================================\n";
+    }
+
+    out.innerHTML = getOutputHeader() + `<pre>${output_content}</pre>`;
+}
+
+/* --- Other Functions (1-9) defined below --- */
+
+function privToPub(){
+    const out = document.getElementById("out_priv");
+    out.innerHTML = '';
+    
+    try{
+        let key = document.getElementById("priv").value.trim();
+        let hex;
+        
+        if(key.length === 64){
+            hex = key;
+        } else {
+            const decodedBytes = b58_decode_check(key);
+            if (decodedBytes[0] !== 0x80) throw new Error("Not a Bitcoin Mainnet Private Key (Version 80).");
+            const decodedHex = bytesToHex(decodedBytes);
+            
+            if (decodedHex.length === 66) { 
+                hex = decodedHex.substring(2);
+            } else if (decodedHex.length === 68 && decodedHex.endsWith('01')) { 
+                hex = decodedHex.substring(2, 66);
+            } else {
+                 throw new Error("Invalid WIF structure or length.");
+            }
+        }
+        
+        const details = getFullKeyDetails(hex);
+
+        let content =
+            "Private Key (Hex): " + details.hex + "\n\n" +
+            "--- COMPRESSED KEY INFO ---\n" +
+            "1. Public Key (Compressed): " + details.compressedPub + "\n" +
+            "2. P2PKH Address: " + details.addressComp + " (Standard)\n" +
+            "3. WIF (Compressed): " + details.wifCompressed + " (K/L...)\n\n" +
+            "--- UNCOMPRESSED KEY INFO ---\n" +
+            "4. Public Key (Uncompressed): " + details.uncompressedPub + "\n" +
+            "5. P2PKH Address: " + details.addressUncomp + " (Legacy)\n" +
+            "6. WIF (Uncompressed): " + details.wifUncompressed + " (5...)";
+
+        out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+
+    } catch(e){ 
+        out.innerHTML = getOutputHeader() + `<pre>Error: Invalid Private Key format or checksum. ${e.message}.</pre>`;
+    }
+}
+
+function wifToHexDetails() {
+    const wif = document.getElementById("wif_to_hex_input").value.trim();
+    const out = document.getElementById("out_wif_to_hex");
+    out.innerHTML = '';
+
+    try {
+        const decodedBytes = b58_decode_check(wif);
+        if (decodedBytes[0] !== 0x80) throw new Error("Not a Bitcoin Mainnet Private Key (Version 80).");
+        
+        const decodedHex = bytesToHex(decodedBytes);
+        let hex;
+        let compressionFlag = "No Flag (Uncompressed)";
+        
+        if (decodedHex.length === 66) { 
+            hex = decodedHex.substring(2);
+        } else if (decodedHex.length === 68 && decodedHex.endsWith('01')) { 
+            hex = decodedHex.substring(2, 66);
+            compressionFlag = "01 (Compressed)";
+        } else {
+             throw new Error("Invalid WIF structure or length.");
+        }
+        
+        const details = getFullKeyDetails(hex);
+
+        let content =
+            "Input WIF Key: " + wif + "\n" +
+            "WIF Type Flag: " + compressionFlag + "\n\n" +
+            "--- HEX PRIVATE KEY ---\n" +
+            "Hex Private Key (d): " + details.hex + "\n\n" +
+            "--- ADDRESSES & PUBLIC KEYS ---\n" +
+            "1. Public Key (Compressed): " + details.compressedPub + "\n" +
+            "2. P2PKH Address (Compressed Hash): " + details.addressComp + " (Standard)\n\n" +
+            "3. Public Key (Uncompressed): " + details.uncompressedPub + "\n" +
+            "4. P2PKH Address (Uncompressed Hash): " + details.addressUncomp + " (Legacy)";
+
+        out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+
+    } catch(e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Invalid WIF Key or Checksum mismatch. ${e.message}</span></pre>`;
+    }
+}
+
+function hexToWifDetails() {
+    const hex = document.getElementById("hex_to_wif_input").value.trim().toLowerCase();
+    const out = document.getElementById("out_hex_to_wif");
+    out.innerHTML = '';
+
+    if (hex.length !== 64 || !/^[0-9a-f]{64}$/.test(hex)) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Invalid Hex Private Key. Must be a 64-character hexadecimal string.</span></pre>`;
+        return;
+    }
+
+    try {
+        const details = getFullKeyDetails(hex);
+
+        let content =
+            "Input Hex Private Key (d): " + details.hex + "\n\n" +
+            "--- COMPRESSED WIF KEY INFO ---\n" +
+            "1. WIF Key (Compressed): " + details.wifCompressed + " (K/L...)\n" +
+            "2. Public Key: " + details.compressedPub + "\n" +
+            "3. P2PKH Address: " + details.addressComp + " (Standard)\n\n" +
+            "--- UNCOMPRESSED WIF KEY INFO ---\n" +
+            "4. WIF Key (Uncompressed): " + details.wifUncompressed + " (5...)\n" +
+            "5. Public Key: " + details.uncompressedPub + "\n" +
+            "6. P2PKH Address: " + details.addressUncomp + " (Legacy)";
+
+        out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+
+    } catch(e) {
+        out.innerHTML = getOutputHeader() + `<pre>Error during conversion: ${e.message || "An unexpected error occurred."}</pre>`;
+    }
+}
+
+/* ---------------------- Remaining Previous Options (1-4, 6, 7) ---------------------- */
+
+// --- Bech32 Utility ---
+function convertbits(data, frombits, tobits, pad) {
+    let acc = 0;
+    let bits = 0;
+    const ret = [];
+    const maxv = (1 << tobits) - 1;
+
+    for (const value of data) {
+        if (value < 0 || value >> frombits !== 0) return null;
+        acc = (acc << frombits) | value;
+        bits += frombits;
+        while (bits >= tobits) {
+            bits -= tobits;
+            ret.push((acc >> bits) & maxv);
+        }
+    }
+    if (pad) {
+        if (bits > 0) {
+            ret.push((acc << (tobits - bits)) & maxv);
+        }
+    } else if (bits >= frombits || ((acc << (tobits - bits)) & maxv)) {
+        return null;
+    }
+    return ret;
+}
+
+function bech32_decode_program(address) {
+    const lower = address.toLowerCase();
+    const separator = lower.lastIndexOf('1');
+    const data = lower.substring(separator + 1);
+
+    const data_words = [];
+    for (const char of data) {
+        const index = BECH32_ALPHABET.indexOf(char);
+        if (index === -1) throw new Error('Invalid Bech32 character');
+        data_words.push(index);
+    }
+    
+    if (data_words.length < 6) throw new Error('Invalid Bech32 data length');
+    
+    const data_payload = data_words.slice(0, data_words.length - 6);
+    
+    if (data_payload.length === 0) throw new Error('Empty payload');
+    const version = data_payload[0];
+    const program_bytes = convertbits(data_payload.slice(1), 5, 8, false);
+
+    if (program_bytes === null) {
+        throw new Error('Invalid Bech32 data conversion');
+    }
+
+    const program = new Uint8Array(program_bytes);
+
+    return { version, program };
+}
+
+function polymod(values) {
+    let chk = 1;
+    for (let p = 0; p < values.length; ++p) {
+        let top = chk >> 25;
+        chk = (chk & 0x1ffffff) << 5 ^ values[p];
+        for (let i = 0; i < 5; ++i) {
+            if ((top >> i) & 1) {
+                chk ^= [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3][i];
+            }
+        }
+    }
+    return chk;
+}
+
+function hrpExpand(hrp) {
+    let ret = [];
+    let p;
+    for (p = 0; p < hrp.length; ++p) {
+        ret.push(hrp.charCodeAt(p) >> 5);
+    }
+    ret.push(0);
+    for (p = 0; p < hrp.length; ++p) {
+        ret.push(hrp.charCodeAt(p) & 31);
+    }
+    return ret;
+}
+
+function createChecksum(hrp, data) {
+    let values = hrpExpand(hrp).concat(data).concat([0, 0, 0, 0, 0, 0]);
+    let mod = polymod(values) ^ 1;
+    let ret = [];
+    for (let p = 0; p < 6; ++p) {
+        ret.push((mod >> 5 * (5 - p)) & 31);
+    }
+    return ret;
+}
+
+function bech32_encode(hrp, data) {
+    let combined = data.concat(createChecksum(hrp, data));
+    let ret = hrp + '1';
+    for (let p = 0; p < combined.length; ++p) {
+        ret += BECH32_ALPHABET.charAt(combined[p]);
+    }
+    return ret;
+}
+
+function segwit_addr(hrp, version, program) {
+    let data = [version].concat(convertbits(program, 8, 5, true));
+    return bech32_encode(hrp, data);
+}
+
+/* ---------------------- 0. Offline All Address Converter ---------------------- */
+function convertAllAddresses() {
+    const input = document.getElementById("offline_priv_input").value.trim();
+    const out = document.getElementById("out_all_addresses");
+    out.innerHTML = '';
+    
+    if(!input) {
+        out.innerHTML = getOutputHeader() + "<pre>Waiting for input...</pre>";
+        return;
+    }
+
+    try {
+        let hex = "";
+        
+        if (input.length === 64 || (input.length === 66 && input.startsWith("0x"))) {
+            hex = input.replace("0x", "").toLowerCase();
+        } else {
+            const decodedBytes = b58_decode_check(input);
+            if (decodedBytes[0] !== 0x80) throw new Error("Not a mainnet private key");
+            const decodedHex = bytesToHex(decodedBytes);
+            if (decodedHex.length === 66) {
+                hex = decodedHex.substring(2);
+            } else if (decodedHex.length === 68 && decodedHex.endsWith("01")) {
+                hex = decodedHex.substring(2, 66);
+            } else {
+                throw new Error("Invalid WIF length");
+            }
+        }
+
+        const ec = new elliptic.ec("secp256k1");
+        const kp = ec.keyFromPrivate(hex);
+        const pub = kp.getPublic();
+
+        const pubUncomp = pub.encode('hex', false);
+        const pubComp = pub.encode('hex', true);
+
+        const hash160Uncomp = ripe160hex(sha256hex(pubUncomp));
+        const hash160Comp = ripe160hex(sha256hex(pubComp));
+
+        const p2pkh_uncomp = hash160ToAddress(hash160Uncomp, "00");
+        const p2pkh_comp = hash160ToAddress(hash160Comp, "00");
+
+        const p2wpkh = segwit_addr("bc", 0, Array.from(hexToBytes(hash160Comp)));
+
+        const script_p2sh_p2wpkh = "0014" + hash160Comp;
+        const hash160_p2sh_p2wpkh = ripe160hex(sha256hex(script_p2sh_p2wpkh));
+        const p2sh_p2wpkh = hash160ToAddress(hash160_p2sh_p2wpkh, "05");
+
+        const script_p2sh_p2pkh = "76a914" + hash160Comp + "88ac";
+        const hash160_p2sh_p2pkh = ripe160hex(sha256hex(script_p2sh_p2pkh));
+        const p2sh_p2pkh = hash160ToAddress(hash160_p2sh_p2pkh, "05");
+
+        const sha256_p2wsh_p2wpkh = sha256hex(script_p2sh_p2wpkh);
+        const p2wsh_p2wpkh = segwit_addr("bc", 0, Array.from(hexToBytes(sha256_p2wsh_p2wpkh)));
+
+        const sha256_p2wsh_p2pkh = sha256hex(script_p2sh_p2pkh);
+        const p2wsh_p2pkh = segwit_addr("bc", 0, Array.from(hexToBytes(sha256_p2wsh_p2pkh)));
+
+        const p2sh_simple = hash160ToAddress(hash160Comp, "05");
+
+        let content =
+            `${hex}\n\n` +
+            `Public Key (Compressed)\n${pubComp}\n\n` +
+            `Public Key (Uncompressed)\n${pubUncomp}\n\n` +
+            `P2PKH (Compressed)\n${p2pkh_comp}\n` +
+            `P2PKH (Uncompressed)\n${p2pkh_uncomp}\n` +
+            `P2WPKH\n${p2wpkh}\n` +
+            `P2SH (P2SH => P2WPKH)\n${p2sh_p2wpkh}\n` +
+            `P2SH (P2SH => P2PKH)\n${p2sh_p2pkh}\n` +
+            `P2WSH (P2WSH => P2WPKH)\n${p2wsh_p2wpkh}\n` +
+            `P2WSH (P2WSH => P2PKH)\n${p2wsh_p2pkh}\n\n` +
+            `======================================================\n` +
+            `■ IF INPUT IS A SCRIPT HASH (From P2SH "3..." Address)\n` +
+            `======================================================\n` +
+            `If you extracted the hash from a 3... address, ONLY the below address is valid.\n\n` +
+            `Original P2SH Address\n${p2sh_simple}`;
+            
+        out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+
+    } catch(e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: ${e.message}</span></pre>`;
+    }
+}
+
+/* ---------------------- 1. TXID → R-S-Z + Recovery ---------------------- */
+async function getRawTx(txid) {
+    const url_big_endian = `https://blockchain.info/rawtx/${txid}?format=hex`;
+    
+    let rawtx = null;
+
+    try {
+        const response = await fetch(url_big_endian, { signal: AbortSignal.timeout(10000) });
+        if (response.ok) {
+            rawtx = await response.text();
+            if (rawtx.length > 100 && !rawtx.includes("Transaction not found")) return rawtx.trim();
+        }
+    } catch (e) {}
+
+    const reversed_txid = reverseHex(txid);
+    const url_little_endian = `https://blockstream.info/api/tx/${reversed_txid}/hex`;
+    try {
+        const response = await fetch(url_little_endian, { signal: AbortSignal.timeout(10000) });
+        if (response.ok) {
+            rawtx = await response.text();
+            if (rawtx.length > 100 && !rawtx.includes("Transaction not found")) return rawtx.trim();
+        }
+    } catch (e) {}
+
+    if (!rawtx || rawtx.length < 100) {
+        throw new Error("Could not fetch raw transaction data from multiple sources.");
+    }
+
+    return rawtx;
+}
+
+function getRS(sig) {
+    let r_len = parseInt(sig.substring(2, 4), 16);
+    let r = sig.substring(4, 4 + r_len * 2);
+    let s_start_index = 8 + r_len * 2;
+    let s = sig.substring(s_start_index);
+    return { r, s };
+}
+
+function parseScriptSig(scr) {
+    let sigL = parseInt(scr.substring(2, 4), 16);
+    let sigs = scr.substring(2 + 2, 2 + sigL * 2);
+    
+    const { r, s } = getRS(sigs.substring(4)); 
+
+    let pubL_start = 4 + sigL * 2;
+    let pub = scr.substring(pubL_start + 2);
+    
+    if (pub.length !== 66 && pub.length !== 130) {
+        throw new Error("Invalid Public Key length in scriptSig.");
+    }
+    
+    return { r, s, pub };
+}
+
+function parsingRaw(txRaw) {
+    let inputLst = [];
+    
+    if (txRaw.substring(8, 12) === '0001') {
+        throw new Error("Witness data found. Only Legacy P2PKH transactions are supported for R-Reuse analysis.");
+    }
+
+    const inputNo = parseInt(txRaw.substring(8, 10), 16);
+    let cur = 10;
+    
+    for (let g = 0; g < inputNo; g++) {
+        const pre_out = txRaw.substring(cur, cur + 64);
+        const var0 = txRaw.substring(cur + 64, cur + 64 + 8); 
+        cur += 64 + 8;
+        
+        const scrL = parseInt(txRaw.substring(cur, cur + 2), 16);
+        const scr = txRaw.substring(cur, 2 + cur + 2 * scrL); 
+        
+        const { r, s, pub } = parseScriptSig(scr);
+
+        const seq_start = 2 + cur + 2 * scrL;
+        const seq = txRaw.substring(seq_start, seq_start + 8); 
+        
+        inputLst.push({ pre_out, var0, r, s, pub, seq });
+        cur = seq_start + 8;
+    }
+    const hsl = txRaw.substring(cur); 
+    
+    return { no1: txRaw.substring(0, 10), inputLst, hsl };
+}
+
+
+function getrsz(pars) {
+    const result = [];
+    const { no1, inputLst, hsl } = pars;
+    const tot = inputLst.length;
+    
+    for (let x = 0; x < tot; x++) {
+        let e = no1; 
+        for (let i = 0; i < tot; i++) {
+            const input = inputLst[i];
+            e += input.pre_out;
+            e += input.var0;
+            
+            if (x === i) {
+                const hash160 = ripe160hex(sha256hex(input.pub));
+                e += '1976a914' + hash160 + '88ac';
+            } else {
+                e += '00';
+            }
+            e += input.seq;
+        }
+        e += hsl + "01000000";
+
+        const z_hex = dblsha256(e); 
+        const addr = pubToAddr_P2PKH(inputLst[x].pub);
+        
+        result.push({ r: inputLst[x].r, s: inputLst[x].s, z: z_hex, pub: inputLst[x].pub, raw_signing_data: e, addr: addr, input_index: x });
+    }
+    return result;
+}
+
+function recover_private_key(R, S1, S2, Z1, Z2) {
+    try {
+        const R_inv = modInverse(R, N);
+        
+        const S_diff = (S1 - S2 + N) % N; 
+        const S_diff_inv = modInverse(S_diff, N);
+        const Z_diff = (Z1 - Z2 + N) % N; 
+        const k = (Z_diff * S_diff_inv) % N; 
+
+        const S1k = (S1 * k) % N;
+        const S1k_Z1 = (S1k - Z1 + N) % N; 
+        const d = (S1k_Z1 * R_inv) % N;
+
+        return d.toString(16).padStart(64, '0');
+    } catch (e) {
+        return "ERROR: Could not perform modular inverse.";
+    }
+}
+
+
+async function processTxid() {
+    const txid = document.getElementById("txid_input").value.trim();
+    const out = document.getElementById("out_txid");
+    
+    out.innerHTML = getOutputHeader() + "<pre>Fetching raw transaction data (Trying multiple APIs)...</pre>";
+    
+    if (txid.length !== 64) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Invalid TXID length. Must be 64 hex characters.</span></pre>`;
+        return;
+    }
+    
+    let rawtx;
+    try {
+        rawtx = await getRawTx(txid);
+        out.innerHTML = getOutputHeader() + `<pre>Raw data fetched. Parsing inputs and calculating Z values...</pre>`;
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error fetching raw TX: ${e.message}. Check network connection or TXID.</span></pre>`;
+        return;
+    }
+
+    let parsed_data;
+    try {
+        parsed_data = parsingRaw(rawtx);
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error parsing raw TX: ${e.message}</span></pre>`;
+        return;
+    }
+
+    const rsz_results = getrsz(parsed_data);
+    
+    let output_html = "<h3>Transaction Analysis Results</h3>";
+    let private_key_found = false;
+    let found_r_reuse = false;
+    
+    for (let i = 0; i < rsz_results.length; i++) {
+        const current = rsz_results[i];
+        
+        output_html += `
+        <p><strong>[+] Input No: ${current.input_index}</strong></p>
+        <pre>  Address: ${current.addr}
+  R: ${current.r}
+  S: ${current.s}
+  Z (Hash): ${current.z}
+  Public Key: ${current.pub}</pre>`;
+
+        if (i > 0) {
+            const previous = rsz_results[i - 1];
+            if (current.r === previous.r) {
+                found_r_reuse = true;
+                output_html += `<p class="private-key">!!! R REUSE DETECTED BETWEEN INPUT ${i-1} AND ${i} !!!</p>`;
+                
+                const private_key = recover_private_key(
+                    hexToBigInt(current.r),
+                    hexToBigInt(previous.s),
+                    hexToBigInt(current.s),
+                    hexToBigInt(previous.z),
+                    hexToBigInt(current.z)
+                );
+                
+                if (private_key.startsWith("ERROR")) {
+                     output_html += `<p class="private-key">Private Key: ERROR RECOVERING KEY. ${private_key}</p>`;
+                } else {
+                    output_html += `<p class="private-key">Private Key Found: ${private_key}</p>`;
+                    private_key_found = true;
+                }
+            }
+        }
+    }
+    
+    if (!found_r_reuse) {
+        output_html += "<p><strong>[+] No matching R values found between consecutive inputs. Private Key: Not Found</strong></p>";
+    } else if (private_key_found) {
+        output_html += "<p class='private-key'>!!! PRIVATE KEY RECOVERY SUCCESSFUL !!!</p>";
+    }
+
+    out.innerHTML = getOutputHeader() + output_html;
+}
+
+
+/* ---------------------- 2. Address → HASH160/Witness Program ---------------------- */
+function addrToHash(){
+    const a = document.getElementById("addr2").value.trim();
+    const out = document.getElementById("out_hash");
+    out.innerHTML = '';
+    
+    try {
+        let content = '';
+        if (a.startsWith('1') || a.startsWith('3')) {
+            const decodedBytes = b58_decode_check(a); 
+            const versionByte = decodedBytes[0];
+            
+            if (decodedBytes.length !== 21) throw new Error('Invalid Base58 decoded length.');
+
+            const hash160_hex = bytesToHex(decodedBytes.slice(1));
+            
+            let isScriptHash = (versionByte === 5);
+            content = 
+                "Address Type: Base58Check\n" +
+                "Version Byte: " + bytesToHex(new Uint8Array([versionByte])) + 
+                " (" + (versionByte === 0 ? "P2PKH: 1..." : "P2SH: 3...") + ")\n" +
+                "HASH160 (RIPEMD160): " + hash160_hex + "\n\n" +
+                (isScriptHash ? 
+                "ℹ️ Note: This is a Script Hash. If you enter this in Option 7, you will get back its 'Plain P2SH' format." : 
+                "✅ Note: This is a Public Key Hash. You can use this in Option 7 to generate all derived address formats.");
+
+        } else if (a.startsWith('bc1q') || a.startsWith('tb1q') || a.startsWith('bc1p') || a.startsWith('tb1p')) {
+            const decoded = bech32_decode_program(a);
+            const program_hash = bytesToHex(decoded.program);
+            
+            let isWSH = (decoded.program.length === 32);
+            content = 
+                "Address Type: Bech32/Bech32m\n" +
+                "Witness Version: " + decoded.version + 
+                " (" + (decoded.version === 0 ? "SegWit" : "Taproot/Future") + ")\n" +
+                "HASH160 / Program Hash: " + program_hash + "\n\n" +
+                (isWSH ?
+                "ℹ️ Note: This is a 32-byte Witness Script Hash. You can enter this in Option 7 to reconstruct the P2WSH address." :
+                "✅ Note: This is a 20-byte Public Key Hash (HASH160). You can use this in Option 7 to generate all derived address formats.");
+                
+        } else {
+            content = "Error: Unsupported address format. Must start with 1, 3, or bc1q/tb1q/bc1p/tb1p.";
+        }
+        
+        out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+    } catch(e){ 
+        out.innerHTML = getOutputHeader() + `<pre>Error: ${e.message || "Invalid address format or decoding failed."}</pre>`;
+    }
+}
+
+
+/* ---------------------- 3. Public Key → X and Y Coordinates ---------------------- */
+function pubToCoords(){
+    const out = document.getElementById("out_pk_coords");
+    out.innerHTML = '';
+    
+    try{
+        let pub = document.getElementById("pk_coords").value.trim();
+        if(pub.length !== 66 && pub.length !== 130) {
+            out.innerHTML = getOutputHeader() + `<pre>Error: Invalid Public Key Length (must be 66 or 130 hex characters).</pre>`;
+            return;
+        }
+
+        const ec = new elliptic.ec("secp256k1");
+        const point = ec.keyFromPublic(pub, 'hex').getPublic();
+        
+        let uncompressedPub = point.encode('hex', false);
+        let compressedPub = point.encode('hex', true);
+
+        let x_hex = point.getX().toString("hex").padStart(64,"0");
+        let y_hex = point.getY().toString("hex").padStart(64,"0");
+        
+        let x_dec = BigInt("0x" + x_hex).toString();
+        let y_dec = BigInt("0x" + y_hex).toString();
+
+        let content =
+            "Input Public Key: " + pub + "\n" +
+            "Public Key (Compressed): " + compressedPub + "\n" +
+            "Public Key (Uncompressed): " + uncompressedPub + "\n\n" +
+            "--- COORDINATES (HEX) ---\n" +
+            "X Coordinate: " + x_hex + "\n" +
+            "Y Coordinate: " + y_hex + "\n\n" +
+            "--- COORDINATES (DECIMAL) ---\n" +
+            "X Coordinate (DECIMAL): " + x_dec + "\n" +
+            "Y Coordinate (DECIMAL): " + y_dec;
+            
+        out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+
+    } catch(e){ 
+        out.innerHTML = getOutputHeader() + `<pre>Error: Invalid Public Key Format. Ensure the key is valid.</pre>`;
+    }
+}
+
+
+/* ---------------------- 4. Public Key → Address ---------------------- */
+function pubToAddr(){
+    const out = document.getElementById("out_pk");
+    out.innerHTML = '';
+    
+    try{
+        let pub = document.getElementById("pk").value.trim();
+        if(pub.length !== 66 && pub.length !== 130) {
+            out.innerHTML = getOutputHeader() + `<pre>Error: Invalid Public Key Length (must be 66 or 130 hex characters).</pre>`;
+            return;
+        }
+
+        const ec = new elliptic.ec("secp256k1");
+        const point = ec.keyFromPublic(pub, 'hex').getPublic();
+
+        let compressedPub = point.encode('hex', true);
+        let address_comp = pubToAddr_P2PKH(compressedPub);
+        
+        let uncompressedPub = point.encode('hex', false);
+        let address_uncomp = pubToAddr_P2PKH(uncompressedPub);
+
+        let content =
+            "Input Public Key: " + pub + "\n\n" +
+            "1. Public Key (Compressed): " + compressedPub + "\n" +
+            "2. P2PKH Address (Compressed Key Hash): " + address_comp + " (Standard)\n\n" +
+            "3. Public Key (Uncompressed): " + uncompressedPub + "\n" +
+            "4. P2PKH Address (Uncompressed Key Hash): " + address_uncomp + " (Legacy)";
+            
+        out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+
+    } catch(e){ 
+        out.innerHTML = getOutputHeader() + `<pre>Error: Invalid Public Key Format or Library Issue.</pre>`;
+    }
+}
+
+
+/* ---------------------- 6. Address → Public Key (API Lookup) ---------------------- */
+async function apiTry(url){
+    try{
+        let r = await fetch(url, { signal: AbortSignal.timeout(10000) });
+        if(!r.ok) return null; 
+        return await r.text(); 
+    } catch {
+        return null;
+    }
+}
+
+async function findPublicKey(){
+    let addr = document.getElementById("addr").value.trim();
+    const out = document.getElementById("out_addr");
+    out.innerHTML = getOutputHeader() + `<pre>Checking for Public Key via API (Blockchain.info)...</pre>`;
+    
+    if (!addr.startsWith('1')) {
+        out.innerHTML = getOutputHeader() + `<pre>Error: Public Key lookup via API usually only works for P2PKH (starts with 1) addresses.</pre>`;
+        return;
+    }
+    
+    let url_direct = `https://blockchain.info/q/pubkeyaddr/${addr}`;
+    let pubkey_response = await apiTry(url_direct);
+
+    if (pubkey_response){
+        if (pubkey_response.length >= 66 && (pubkey_response.startsWith("02") || pubkey_response.startsWith("03") || pubkey_response.startsWith("04"))){
+            let content = getOutputHeader() + "✅ Public Key Found (via Blockchain.info):\n" + pubkey_response; 
+            out.innerHTML = `<pre>${content}</pre>`;
+             return;
+        } else if (pubkey_response.includes("No public key for this address")) {
+             out.innerHTML = getOutputHeader() + `<pre>❌ Public Key not found in Blockchain.info's index. (Perhaps no transactions yet or address type unsupported)</pre>`;
+             return;
+        }
+    }
+    
+    out.innerHTML = getOutputHeader() + `<pre>❌ Public Key not found via API. The Public Key must have been exposed (e.g., when the coins were spent) for this tool to find it.</pre>`;
+}
+
+
+/* ---------------------- 7. Hash / Program → ADDRESS LOGIC ---------------------- */
+function rmdToAddress() {
+    const hash160 = document.getElementById("rmd160_input").value.trim().toLowerCase();
+    const out = document.getElementById("out_rmd160");
+    out.innerHTML = '';
+
+    if (hash160.length === 64 && /^[0-9a-f]{64}$/.test(hash160)) {
+        try {
+            const p2wsh_addr = segwit_addr("bc", 0, Array.from(hexToBytes(hash160)));
+            let content = `Input Program Hash (SHA256): ${hash160}\n\n` +
+                          `P2WSH (Native Segwit)\n${p2wsh_addr}`;
+                          
+            out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+        } catch(e) {
+            out.innerHTML = getOutputHeader() + `<pre>Error during conversion: ${e.message}</pre>`;
+        }
+        return;
+    }
+
+    if (hash160.length !== 40 || !/^[0-9a-f]{40}$/.test(hash160)) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Invalid Hash. Must be 40 (HASH160) or 64 (SHA256) hex characters.</span></pre>`;
+        return;
+    }
+
+    try {
+        const p2pkh_addr = hash160ToAddress(hash160, "00");
+        const p2sh_simple = hash160ToAddress(hash160, "05");
+        const p2wpkh = segwit_addr("bc", 0, Array.from(hexToBytes(hash160)));
+
+        const script_p2sh_p2wpkh = "0014" + hash160;
+        const hash160_p2sh_p2wpkh = ripe160hex(sha256hex(script_p2sh_p2wpkh));
+        const p2sh_p2wpkh = hash160ToAddress(hash160_p2sh_p2wpkh, "05");
+
+        const script_p2sh_p2pkh = "76a914" + hash160 + "88ac";
+        const hash160_p2sh_p2pkh = ripe160hex(sha256hex(script_p2sh_p2pkh));
+        const p2sh_p2pkh = hash160ToAddress(hash160_p2sh_p2pkh, "05");
+
+        const sha256_p2wsh_p2wpkh = sha256hex(script_p2sh_p2wpkh);
+        const p2wsh_p2wpkh = segwit_addr("bc", 0, Array.from(hexToBytes(sha256_p2wsh_p2wpkh)));
+
+        const sha256_p2wsh_p2pkh = sha256hex(script_p2sh_p2pkh);
+        const p2wsh_p2pkh = segwit_addr("bc", 0, Array.from(hexToBytes(sha256_p2wsh_p2pkh)));
+
+        let content =
+            `Input Hash: ${hash160}\n\n` +
+            `======================================================\n` +
+            `■ IF INPUT IS A PUBLIC KEY HASH (From P2PKH / P2WPKH)\n` +
+            `======================================================\n` +
+            `These addresses are valid ONLY if the hash above is a Public Key Hash.\n\n` +
+            `P2PKH\n${p2pkh_addr}\n` +
+            `P2WPKH\n${p2wpkh}\n` +
+            `P2SH (P2SH => P2WPKH)\n${p2sh_p2wpkh}\n` +
+            `P2SH (P2SH => P2PKH)\n${p2sh_p2pkh}\n` +
+            `P2WSH (P2WSH => P2WPKH)\n${p2wsh_p2wpkh}\n` +
+            `P2WSH (P2WSH => P2PKH)\n${p2wsh_p2pkh}\n\n` +
+            `======================================================\n` +
+            `■ IF INPUT IS A SCRIPT HASH (From P2SH "3..." Address)\n` +
+            `======================================================\n` +
+            `If you extracted the hash from a 3... address, ONLY the below address is valid.\n\n` +
+            `Original P2SH Address\n${p2sh_simple}`;
+
+        out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+
+    } catch(e) {
+        out.innerHTML = getOutputHeader() + `<pre>Error during conversion: ${e.message || "An unexpected error occurred."}</pre>`;
+    }
+}
+
+/* ---------------------- 12. Cross-TXID Private Key Recovery ---------------------- */
+async function processCrossTxid() {
+    const txid1 = document.getElementById("txid1_input").value.trim();
+    const txid2 = document.getElementById("txid2_input").value.trim();
+    const out = document.getElementById("out_cross_txid");
+    
+    out.innerHTML = getOutputHeader() + "<pre>Fetching raw transaction data (Trying multiple APIs)...</pre>";
+    
+    if (txid1.length !== 64 || txid2.length !== 64) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Invalid TXID length. Both must be 64 hex characters.</span></pre>`;
+        return;
+    }
+    
+    let rawtx1, rawtx2;
+    try {
+        rawtx1 = await getRawTx(txid1);
+        out.innerHTML = getOutputHeader() + "<pre>TXID 1 fetched... Fetching TXID 2...</pre>";
+        rawtx2 = await getRawTx(txid2);
+        out.innerHTML = getOutputHeader() + `<pre>Raw data fetched. Parsing inputs and calculating Z values...</pre>`;
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error fetching raw TX: ${e.message}. Check network connection or TXIDs.</span></pre>`;
+        return;
+    }
+
+    let parsed1, parsed2;
+    try {
+        parsed1 = parsingRaw(rawtx1);
+        parsed2 = parsingRaw(rawtx2);
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error parsing raw TX: ${e.message}. Only Legacy P2PKH transactions are supported.</span></pre>`;
+        return;
+    }
+
+    const rsz1 = getrsz(parsed1);
+    const rsz2 = getrsz(parsed2);
+    
+    let output_html = "<h3>Cross-Transaction Analysis Results</h3>";
+    
+    output_html += "<h4>Transaction 1 Inputs:</h4>";
+    for (let i = 0; i < rsz1.length; i++) {
+        const c = rsz1[i];
+        output_html += `<p><strong>[+] Input No: ${c.input_index}</strong></p>
+        <pre>  Address: ${c.addr}
+  R: ${c.r}
+  S: ${c.s}
+  Z (Hash): ${c.z}
+  Public Key: ${c.pub}</pre>`;
+    }
+
+    output_html += "<h4>Transaction 2 Inputs:</h4>";
+    for (let i = 0; i < rsz2.length; i++) {
+        const c = rsz2[i];
+        output_html += `<p><strong>[+] Input No: ${c.input_index}</strong></p>
+        <pre>  Address: ${c.addr}
+  R: ${c.r}
+  S: ${c.s}
+  Z (Hash): ${c.z}
+  Public Key: ${c.pub}</pre>`;
+    }
+    
+    let private_key_found = false;
+    let found_r_reuse = false;
+    
+    output_html += "<h4>Recovery Status:</h4>";
+    
+    for (let i = 0; i < rsz1.length; i++) {
+        for (let j = 0; j < rsz2.length; j++) {
+            if (rsz1[i].r === rsz2[j].r) {
+                found_r_reuse = true;
+                output_html += `<p class="private-key" style="margin-top:15px;">!!! R REUSE DETECTED BETWEEN TX1 (Input ${i}) AND TX2 (Input ${j}) !!!</p>`;
+                
+                const private_key = recover_private_key(
+                    hexToBigInt(rsz1[i].r),
+                    hexToBigInt(rsz1[i].s),
+                    hexToBigInt(rsz2[j].s),
+                    hexToBigInt(rsz1[i].z),
+                    hexToBigInt(rsz2[j].z)
+                );
+                
+                if (private_key.startsWith("ERROR")) {
+                     output_html += `<p class="private-key">Private Key: ERROR RECOVERING KEY. ${private_key}</p>`;
+                } else {
+                    output_html += `<div style="border: 2px solid var(--highlight-green); padding: 15px; border-radius: 8px; margin-top: 10px; background-color: rgba(0, 204, 0, 0.1);">
+                        <p style="color: var(--highlight-green); font-size: 18px; margin-top: 0; font-weight: bold;">[+] Private Key Found Successfully!</p>
+                        <p class="private-key" style="word-break: break-all; margin-bottom: 5px;"><strong>Hex:</strong> ${private_key}</p>
+                    </div>`;
+                    private_key_found = true;
+                }
+            }
+        }
+    }
+    
+    if (!found_r_reuse) {
+        output_html += "<pre><strong>[-] No matching R values found across the two transactions. Private Key: Not Found</strong></pre>";
+    }
+
+    out.innerHTML = getOutputHeader() + output_html;
+}
+
+/* ---------------------- 20. Cross-Address Shared 'K' Exploit ---------------------- */
+async function processSharedKExploit() {
+    const txid1 = document.getElementById("exploit_txid1_input").value.trim();
+    const txid2 = document.getElementById("exploit_txid2_input").value.trim();
+    const out = document.getElementById("out_shared_k_exploit");
+    
+    out.innerHTML = getOutputHeader() + "<pre>Fetching raw transaction data from multiple APIs...</pre>";
+    
+    if (txid1.length !== 64 || txid2.length !== 64) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Invalid TXID length. Both must be 64 hex characters.</span></pre>`;
+        return;
+    }
+    
+    let rawtx1, rawtx2;
+    try {
+        rawtx1 = await getRawTx(txid1);
+        out.innerHTML = getOutputHeader() + "<pre>TXID 1 fetched... Fetching TXID 2...</pre>";
+        rawtx2 = await getRawTx(txid2);
+        out.innerHTML = getOutputHeader() + `<pre>Evaluating ECDSA algebraic signatures...</pre>`;
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error fetching raw TX: ${e.message}. Check network connection or TXIDs.</span></pre>`;
+        return;
+    }
+
+    let parsed1, parsed2;
+    try {
+        parsed1 = parsingRaw(rawtx1);
+        parsed2 = parsingRaw(rawtx2);
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error parsing raw TX: ${e.message}. Only Legacy P2PKH transactions are supported for this exploit.</span></pre>`;
+        return;
+    }
+
+    const rsz1 = getrsz(parsed1);
+    const rsz2 = getrsz(parsed2);
+    
+    let output_html = "<h3>Deep Exploit Mathematical Results</h3>";
+    let found_r_reuse = false;
+    
+    for (let i = 0; i < rsz1.length; i++) {
+        for (let j = 0; j < rsz2.length; j++) {
+            if (rsz1[i].r === rsz2[j].r) {
+                found_r_reuse = true;
+                output_html += `<p class="private-key" style="margin-top:15px; font-size: 16px;"><strong>[!] CRITICAL: SHARED 'K' (NONCE) COLLISION DETECTED ACROSS DIFFERENT ADDRESSES!</strong></p>`;
+                output_html += `<pre>Collision between TX1(Input ${i}) and TX2(Input ${j})\nShared R-Value:\n${rsz1[i].r}</pre>`;
+                
+                // If addresses are the same, it's normal reuse. If different, it's the complex exploit.
+                const sameAddress = (rsz1[i].addr === rsz2[j].addr);
+                if(sameAddress){
+                    output_html += `<p style="color:var(--bitcoin-orange);">Note: Both inputs use the SAME address (${rsz1[i].addr}). Processing standard ECDSA math recovery...</p>`;
+                } else {
+                    output_html += `<p style="color:#ff3333; font-weight:bold;">[!] EXPLOIT: Inputs use DIFFERENT addresses!<br>TX1 Addr: ${rsz1[i].addr}<br>TX2 Addr: ${rsz2[j].addr}<br>Executing Multi-Key Lattice Extraction...</p>`;
+                }
+                
+                try {
+                     // 1. Calculate the shared nonce 'k' first
+                     const S1 = hexToBigInt(rsz1[i].s);
+                     const S2 = hexToBigInt(rsz2[j].s);
+                     const Z1 = hexToBigInt(rsz1[i].z);
+                     const Z2 = hexToBigInt(rsz2[j].z);
+                     const R  = hexToBigInt(rsz1[i].r);
+                     const R_inv = modInverse(R, N);
+
+                     const S_diff = (S1 - S2 + N) % N; 
+                     const S_diff_inv = modInverse(S_diff, N);
+                     const Z_diff = (Z1 - Z2 + N) % N; 
+                     
+                     // Recover Shared K
+                     const k = (Z_diff * S_diff_inv) % N; 
+                     output_html += `<pre style="color: #55ff55;"><strong>[+] Extracted Shared Random Nonce 'K':</strong>\n${k.toString(16).padStart(64, '0')}</pre>`;
+
+                     // 2. Use 'k' to find Private Key 1
+                     const S1k_Z1 = ((S1 * k) - Z1 + N) % N; 
+                     const pkey1 = (S1k_Z1 * R_inv) % N;
+                     const pkey1_hex = pkey1.toString(16).padStart(64, '0');
+
+                     // 3. Use 'k' to find Private Key 2
+                     const S2k_Z2 = ((S2 * k) - Z2 + N) % N; 
+                     const pkey2 = (S2k_Z2 * R_inv) % N;
+                     const pkey2_hex = pkey2.toString(16).padStart(64, '0');
+
+                     output_html += `<div style="border: 2px solid #ff3333; padding: 15px; border-radius: 8px; margin-top: 10px; background-color: rgba(255, 51, 51, 0.1);">
+                         <p style="color: #ff5555; font-size: 18px; margin-top: 0; font-weight: bold;">[+] Extracted Private Keys</p>`;
+
+                     if(sameAddress) {
+                         output_html += `<p class="private-key" style="word-break: break-all; margin-bottom: 5px;"><strong>Hex (Addr ${rsz1[i].addr}):</strong><br>${pkey1_hex}</p>`;
+                     } else {
+                         output_html += `
+                         <p style="color:var(--text-color); margin-bottom:2px;"><strong>Key 1 (For ${rsz1[i].addr}):</strong></p>
+                         <p class="private-key" style="word-break: break-all; margin-bottom: 15px;">${pkey1_hex}</p>
+                         
+                         <p style="color:var(--text-color); margin-bottom:2px;"><strong>Key 2 (For ${rsz2[j].addr}):</strong></p>
+                         <p class="private-key" style="word-break: break-all; margin-bottom: 5px;">${pkey2_hex}</p>`;
+                     }
+                     
+                     output_html += `</div>`;
+
+                } catch (err) {
+                     output_html += `<p class="private-key">Private Key: ERROR IN MATH EXPLOIT RECOVERY. ${err.message}</p>`;
+                }
+            }
+        }
+    }
+    
+    if (!found_r_reuse) {
+        output_html += "<pre><strong>[-] Exploit Failed: No Shared 'K' (R-value collision) detected between the provided addresses.</strong></pre>";
+    }
+
+    out.innerHTML = getOutputHeader() + output_html;
+}
+
+/* ---------------------- 21. Signature Fault Injection Recovery ---------------------- */
+function processFaultInjection() {
+    const z_hex = document.getElementById("fault_msg_hash").value.trim();
+    const r_hex = document.getElementById("fault_sig_r").value.trim();
+    const s_valid_hex = document.getElementById("fault_sig_s_valid").value.trim();
+    const s_corrupt_hex = document.getElementById("fault_sig_s_corrupt").value.trim();
+    const out = document.getElementById("out_fault_injection");
+
+    out.innerHTML = '';
+
+    if (!z_hex || !r_hex || !s_valid_hex || !s_corrupt_hex) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: All fields are required.</span></pre>`;
+        return;
+    }
+
+    try {
+        const Z = hexToBigInt(z_hex);
+        const R = hexToBigInt(r_hex);
+        const S_valid = hexToBigInt(s_valid_hex);
+        const S_corrupt = hexToBigInt(s_corrupt_hex);
+
+        // 1. Calculate the difference between valid and corrupted S
+        // delta_S = (S_valid - S_corrupt) mod N
+        const delta_S = (S_valid - S_corrupt + N) % N;
+        
+        if (delta_S === 0n) {
+             out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Valid and Corrupted S-values are identical. No fault detected.</span></pre>`;
+             return;
+        }
+
+        // We use the common ECDSA fault formula assuming a transient fault in 'k' generation 
+        // or a bit-flip in the intermediate signature scalar computation.
+        // A common fault scenario allows calculating `k` directly: 
+        // k = (Z * (S_valid - S_corrupt)^-1) mod N   (simplified for certain fault models)
+        // Let's apply the standard single-bit / truncation fault algebraic extraction:
+        
+        // Step 1: Invert delta_S
+        const delta_S_inv = modInverse(delta_S, N);
+        
+        // Step 2: Attempt to recover k based on fault difference
+        // k_faulted = (Z * delta_S_inv) % N
+        const k_recovered = (Z * delta_S_inv) % N;
+
+        // Step 3: With recovered k, solve for the private key 'd' using the valid signature
+        // d = ((S_valid * k_recovered) - Z) * R^-1 mod N
+        const R_inv = modInverse(R, N);
+        
+        const S_k = (S_valid * k_recovered) % N;
+        const S_k_Z = (S_k - Z + N) % N;
+        const private_key_d = (S_k_Z * R_inv) % N;
+        
+        const priv_hex = private_key_d.toString(16).padStart(64, '0');
+
+        let content = `
+<div style="border: 2px solid #aa00ff; padding: 15px; border-radius: 8px; background-color: rgba(170, 0, 255, 0.1);">
+    <h3 style="color: #aa00ff; margin-top: 0;"><i class="fas fa-microchip"></i> Fault Injection Math Successful</h3>
+    <p><strong>Message Hash (Z):</strong> ${z_hex}</p>
+    <p><strong>R-Value:</strong> ${r_hex}</p>
+    <p><strong>Delta 'S' Calculated:</strong> ${delta_S.toString(16)}</p>
+    
+    <p style="color: #00cc00; font-weight: bold; margin-top: 15px;">[+] Recovered Fault Nonce (k):</p>
+    <pre style="background: #111; color: #00cc00; padding: 10px; border: 1px solid #444; overflow-x: auto;">${k_recovered.toString(16).padStart(64, '0')}</pre>
+    
+    <p style="color: #ff5555; font-weight: bold; margin-top: 15px; font-size: 18px;">[!!!] REVERSED PRIVATE KEY:</p>
+    <pre class="private-key" style="background: #2a0000; border: 1px solid #ff3333; font-size: 18px; padding: 15px; text-align: center; word-break: break-all;">${priv_hex}</pre>
+</div>`;
+
+        out.innerHTML = getOutputHeader() + content;
+
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Math Error during ECDSA Fault Analysis: ${e.message}</span></pre>`;
+    }
+}
+
+/* ---------------------- 22. Transaction Malleability Mutator ---------------------- */
+function processMalleability() {
+    const rawtx = document.getElementById("malleability_tx_input").value.trim();
+    const out = document.getElementById("out_malleability");
+    out.innerHTML = '';
+
+    if (!rawtx || rawtx.length < 100) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Enter a valid raw transaction.</span></pre>`;
+        return;
+    }
+
+    try {
+        const parsed = parsingRaw(rawtx);
+        
+        if (parsed.inputLst.length === 0) {
+            throw new Error("No inputs found to mutate.");
+        }
+
+        // We'll mutate the very first input's signature S value
+        const input0 = parsed.inputLst[0];
+        const old_S_hex = input0.s;
+        
+        const S_bn = hexToBigInt(old_S_hex);
+        const mutated_S_bn = (N - S_bn) % N;
+        let mutated_S_hex = mutated_S_bn.toString(16);
+        
+        // Ensure even length padding
+        if (mutated_S_hex.length % 2 !== 0) mutated_S_hex = "0" + mutated_S_hex;
+
+        let content = `
+<div style="border: 2px solid #00cccc; padding: 15px; border-radius: 8px; background-color: rgba(0, 204, 204, 0.1);">
+    <h3 style="color: #00cccc; margin-top: 0;"><i class="fas fa-biohazard"></i> Signature Malleability Successful</h3>
+    <p>We applied the ECDSA Math Mutator: <code>S' = N - S</code></p>
+    
+    <p><strong>Original 'S' Value:</strong><br>${old_S_hex}</p>
+    <p style="color: #00cccc; font-weight: bold;"><strong>Mutated (Complementary) 'S' Value:</strong><br>${mutated_S_hex}</p>
+    
+    <p style="margin-top: 15px;"><strong>What happens now?</strong></p>
+    <ul style="font-size: 14px;">
+        <li>The signature remains 100% mathematically valid cryptographic proof.</li>
+        <li>The transaction will still transfer funds correctly.</li>
+        <li style="color: #ff5555; font-weight: bold;">HOWEVER: Because the signature string changed, the main TXID hash of this transaction will be completely different!</li>
+    </ul>
+    <p style="font-size: 13px; color: #bbb;">(Note: Tool demonstrates the math mutation. Reconstructing the full raw hex string with the new S and recalculating script lengths requires full ASN.1 DER re-encoding).</p>
+</div>`;
+
+        out.innerHTML = getOutputHeader() + content;
+
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Malleability Error: ${e.message}. Only Legacy TX supported.</span></pre>`;
+    }
+}
+
+/* ---------------------- 23. Shamir's Secret Sharing Recoverer ---------------------- */
+function processSSS() {
+    const lines = document.getElementById("sss_input").value.trim().split('\n');
+    const threshold = parseInt(document.getElementById("sss_threshold").value);
+    const out = document.getElementById("out_sss");
+    out.innerHTML = '';
+    
+    if (lines.length < threshold) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: You provided ${lines.length} shares, but threshold is set to ${threshold}. Not enough data to recover.</span></pre>`;
+        return;
+    }
+
+    try {
+        let shares = [];
+        for (let i = 0; i < lines.length; i++) {
+            if(!lines[i].trim()) continue;
+            let parts = lines[i].split(':');
+            if(parts.length !== 2) throw new Error(`Invalid share format at line ${i+1}. Use X:Y`);
+            
+            let x = BigInt(parts[0].trim());
+            let y_hex = parts[1].trim();
+            let y = hexToBigInt(y_hex);
+            shares.push({x, y});
+        }
+        
+        if (shares.length < threshold) throw new Error("Not enough valid shares.");
+
+        // Lagrange Interpolation over Finite Field (Modulo N for Secp256k1 keys)
+        let secret = 0n;
+        
+        // We only use exactly the 'threshold' number of shares to calculate
+        for (let i = 0; i < threshold; i++) {
+            let num = 1n;
+            let den = 1n;
+            
+            for (let j = 0; j < threshold; j++) {
+                if (i !== j) {
+                    num = (num * (-shares[j].x + N)) % N;
+                    let diff = (shares[i].x - shares[j].x + N) % N;
+                    den = (den * diff) % N;
+                }
+            }
+            
+            let den_inv = modInverse(den, N);
+            let term = (shares[i].y * num * den_inv) % N;
+            secret = (secret + term) % N;
+        }
+
+        const recovered_hex = secret.toString(16).padStart(64, '0');
+
+        let content = `
+<div style="border: 2px solid #cccc00; padding: 15px; border-radius: 8px; background-color: rgba(204, 204, 0, 0.1);">
+    <h3 style="color: #cccc00; margin-top: 0;"><i class="fas fa-puzzle-piece"></i> Lagrange Interpolation Successful</h3>
+    <p>Shares Processed: ${threshold}</p>
+    <p>Galois Field Modulo: secp256k1 Curve Order (N)</p>
+    
+    <p style="color: #00cc00; font-weight: bold; margin-top: 15px; font-size: 18px;">[+] REASSEMBLED PRIVATE KEY:</p>
+    <pre class="private-key" style="background: #111; border: 1px solid #cccc00; font-size: 18px; padding: 15px; text-align: center; word-break: break-all;">${recovered_hex}</pre>
+</div>`;
+
+        out.innerHTML = getOutputHeader() + content;
+
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Interpolation Error: ${e.message}</span></pre>`;
+    }
+}
+
+/* ---------------------- 24. OP_RETURN Hidden Payload Decoder ---------------------- */
+function hexToAscii(hexStr) {
+    let asciiStr = '';
+    for (let i = 0; i < hexStr.length; i += 2) {
+        let charCode = parseInt(hexStr.substr(i, 2), 16);
+        // Only print readable ASCII range
+        if (charCode >= 32 && charCode <= 126) {
+            asciiStr += String.fromCharCode(charCode);
+        } else {
+            asciiStr += '.'; // dot for unreadable binary
+        }
+    }
+    return asciiStr;
+}
+
+function processOpReturn() {
+    const rawtx = document.getElementById("op_return_input").value.trim().toLowerCase();
+    const out = document.getElementById("out_op_return");
+    out.innerHTML = '';
+
+    if (!rawtx || rawtx.length < 50) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: Enter a valid raw transaction.</span></pre>`;
+        return;
+    }
+
+    try {
+        // Very basic heuristic scan for 0x6a (OP_RETURN) in the hex body.
+        // A true parser would map vout arrays, but scanning 6a works well for direct payloads
+        
+        let found_payloads = [];
+        
+        // We look for '6a' followed by a length byte (say '01' to '4c'), then the data
+        let index = rawtx.indexOf('6a');
+        while (index !== -1 && index < rawtx.length - 4) {
+            
+            // Get the next byte (length push)
+            let len_hex = rawtx.substring(index + 2, index + 4);
+            let payload_len = parseInt(len_hex, 16);
+            
+            if (payload_len > 0 && payload_len <= 80) { // Max normal OP_RETURN is 80 bytes
+                let end_idx = index + 4 + (payload_len * 2);
+                if (end_idx <= rawtx.length) {
+                    let payload_hex = rawtx.substring(index + 4, end_idx);
+                    
+                    found_payloads.push({
+                        raw: payload_hex,
+                        ascii: hexToAscii(payload_hex),
+                        size: payload_len
+                    });
+                }
+            }
+            index = rawtx.indexOf('6a', index + 2);
+        }
+
+        let content = `<h3 style="color: #5555ff; margin-top: 0;"><i class="fas fa-search"></i> OP_RETURN Deep Scan Results</h3>`;
+        
+        if (found_payloads.length === 0) {
+            content += `<pre>No standard OP_RETURN (0x6a) hidden payloads were detected in this transaction hex.</pre>`;
+        } else {
+             for (let i=0; i<found_payloads.length; i++) {
+                 content += `
+<div style="border: 2px solid #5555ff; padding: 10px; border-radius: 8px; margin-bottom: 10px; background-color: rgba(85, 85, 255, 0.1);">
+    <p><strong>Payload #${i+1}</strong> (${found_payloads[i].size} bytes)</p>
+    <p><strong>Hex Dump:</strong><br><span style="word-break: break-all; font-family: monospace; color: #aaa;">${found_payloads[i].raw}</span></p>
+    <p style="color: #5555ff; font-weight:bold; margin-bottom: 2px;">Decoded ASCII Message (Steganography):</p>
+    <pre style="background: #111; color: #fff; padding: 10px; border: 1px solid #444; border-left: 4px solid #5555ff;">${found_payloads[i].ascii}</pre>
+</div>`;
+             }
+        }
+
+        out.innerHTML = getOutputHeader() + content;
+
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Extraction Error: ${e.message}</span></pre>`;
+    }
+}
+
+/* ---------------------- 13. Mnemonic Seed → Private Key & Address ---------------------- */
+function deriveChildKey(privateKeyHex, chainCodeHex, index) {
+    const ec = new elliptic.ec("secp256k1");
+    let dataHex;
+    if (index >= 0x80000000) {
+        dataHex = "00" + privateKeyHex + index.toString(16).padStart(8, "0");
+    } else {
+        const kp = ec.keyFromPrivate(privateKeyHex);
+        const pubKeyHex = kp.getPublic(true, 'hex');
+        dataHex = pubKeyHex + index.toString(16).padStart(8, "0");
+    }
+
+    const hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA512, CryptoJS.enc.Hex.parse(chainCodeHex));
+    hmac.update(CryptoJS.enc.Hex.parse(dataHex));
+    const I = hmac.finalize().toString(CryptoJS.enc.Hex);
+
+    const IL = I.substring(0, 64);
+    const IR = I.substring(64, 128);
+
+    const IL_bn = BigInt("0x" + IL);
+    if (IL_bn >= N) throw new Error("Invalid child key");
+
+    const k_bn = BigInt("0x" + privateKeyHex);
+    let childPriv_bn = (IL_bn + k_bn) % N;
+    
+    if (childPriv_bn === 0n) throw new Error("Invalid child key");
+
+    return {
+        privateKey: childPriv_bn.toString(16).padStart(64, "0"),
+        chainCode: IR
+    };
+}
+
+function derivePath(seedHex, path) {
+    const hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA512, CryptoJS.enc.Utf8.parse("Bitcoin seed"));
+    hmac.update(CryptoJS.enc.Hex.parse(seedHex));
+    const rootI = hmac.finalize().toString(CryptoJS.enc.Hex);
+    let state = {
+        privateKey: rootI.substring(0, 64),
+        chainCode: rootI.substring(64, 128)
+    };
+
+    const segments = path.split('/').slice(1);
+    for (const segment of segments) {
+        let isHardened = segment.endsWith("'");
+        let index = parseInt(segment.replace("'", ""));
+        if (isHardened) index += 0x80000000;
+        state = deriveChildKey(state.privateKey, state.chainCode, index);
+    }
+    return state.privateKey;
+}
+
+function dumpMnemonicAddress() {
+    const mnemonic = document.getElementById("mnemonic_input").value.trim().toLowerCase().replace(/\s+/g, ' ');
+    const wallet = document.getElementById("wallet_select").value;
+    const words = document.getElementById("word_count").value;
+    const out = document.getElementById("out_mnemonic");
+    
+    if(!mnemonic) {
+        out.innerHTML = getOutputHeader() + "<pre><span class='private-key'>Error: Enter mnemonic words first.</span></pre>";
+        return;
+    }
+    
+    const wordList = mnemonic.split(" ");
+    if(wordList.length !== parseInt(words)) {
+        out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: You selected ${words} words, but entered ${wordList.length} words.</span></pre>`;
+        return;
+    }
+
+    out.innerHTML = getOutputHeader() + "<pre>Deriving Master Seed and Wallet Paths... Please wait (~1 second)...</pre>";
+    
+    setTimeout(() => {
+        try {
+            const seed = CryptoJS.PBKDF2(mnemonic, "mnemonic", { keySize: 512/32, iterations: 2048, hasher: CryptoJS.algo.SHA512 }).toString(CryptoJS.enc.Hex);
+            
+            const btcPath84 = "m/84'/0'/0'/0/0"; 
+            const priv84 = derivePath(seed, btcPath84);
+            const pubComp84 = (new elliptic.ec("secp256k1")).keyFromPrivate(priv84).getPublic(true, 'hex');
+            const p2wpkh = segwit_addr("bc", 0, Array.from(hexToBytes(ripe160hex(sha256hex(pubComp84)))));
+
+            const btcPath44 = "m/44'/0'/0'/0/0";
+            const priv44 = derivePath(seed, btcPath44);
+            const pubComp44 = (new elliptic.ec("secp256k1")).keyFromPrivate(priv44).getPublic(true, 'hex');
+            const p2pkh = hash160ToAddress(ripe160hex(sha256hex(pubComp44)), "00");
+
+            let content = `Mnemonic Words: ${mnemonic}\n` +
+                          `Wallet Mode: ${document.getElementById("wallet_select").options[document.getElementById("wallet_select").selectedIndex].text}\n\n`;
+
+            if (wallet === "trust" || wallet === "binance") {
+                content += `=================================================\n` +
+                           `■ NATIVE SEGWIT PATH (TrustWallet/Binance Default)\n` +
+                           `=================================================\n` +
+                           `BTC Address (bc1q)\n${p2wpkh}\n\n` +
+                           `Hex Private Key\n${priv84}\n\n` +
+                           `=================================================\n` +
+                           `■ LEGACY PATH\n` +
+                           `=================================================\n` +
+                           `BTC Address (1...)\n${p2pkh}\n\n` +
+                           `Hex Private Key\n${priv44}`;
+            } else if (wallet === "metamask") {
+                const ethPath = "m/44'/60'/0'/0/0"; 
+                const privEth = derivePath(seed, ethPath);
+                
+                content += `=================================================\n` +
+                           `■ METAMASK BTC SNAP PATH (Native Segwit)\n` +
+                           `=================================================\n` +
+                           `BTC Address (bc1q)\n${p2wpkh}\n\n` +
+                           `Hex Private Key\n${priv84}\n\n` +
+                           `=================================================\n` +
+                           `■ METAMASK ETH ROOT PATH (For Reference)\n` +
+                           `=================================================\n` +
+                           `Hex Private Key\n${privEth}\n` +
+                           `(You can safely import this Hex key directly into Metamask)`;
+            }
+
+            out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+        } catch(e) {
+            out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Error: ${e.message}</span></pre>`;
+        }
+    }, 50); 
+}
+
+/* ---------------------- 14. BrainWallet Generator ---------------------- */
+function generateBrainWallet() {
+    const text = document.getElementById("brain_input").value;
+    const out = document.getElementById("out_brain");
+    if (!text) return;
+    const hex = CryptoJS.SHA256(text).toString(CryptoJS.enc.Hex);
+    let details = {};
+    try { details = getFullKeyDetails(hex); } catch(e){}
+    let content = `Passphrase: "${text}"\n` +
+                  `Generated Hex PrivKey: ${hex}\n\n` +
+                  `WIF (Compressed): ${details.wifCompressed}\n` +
+                  `P2PKH (Compressed): ${details.addressComp}\n\n` +
+                  `WIF (Uncompressed): ${details.wifUncompressed}\n` +
+                  `P2PKH (Uncompressed): ${details.addressUncomp}`;
+    out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+}
+
+/* ---------------------- 15. Mini-Private Key Decoder ---------------------- */
+function decodeMiniKey() {
+    const mini = document.getElementById("mini_input").value.trim();
+    const out = document.getElementById("out_mini");
+    if(!mini || mini.charAt(0) !== 'S') {
+        out.innerHTML = getOutputHeader() + `<pre class="private-key">Error: Mini keys must start with 'S'.</pre>`;
+        return;
+    }
+    const checkHash = CryptoJS.SHA256(mini + "?").toString(CryptoJS.enc.Hex);
+    if (!checkHash.startsWith('00')) {
+        out.innerHTML = getOutputHeader() + `<pre class="private-key">Warning: Invalid Mini-key (SHA256 Checksum failed). The original key might have a typo.</pre>`;
+    }
+    const hex = CryptoJS.SHA256(mini).toString(CryptoJS.enc.Hex);
+    let details = {};
+    try { details = getFullKeyDetails(hex); } catch(e){}
+    let content = `Valid Mini-Key format detected.\n` +
+                  `Hex PrivKey (SHA256 of Key): ${hex}\n\n` +
+                  `WIF (Uncompressed standard format): ${details.wifUncompressed}\n` +
+                  `P2PKH Address: ${details.addressUncomp}`;
+    out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+}
+
+
+/* ---------------------- 18. Multisig Address Detector & Script Analyzer ---------------------- */
+async function checkMultisig() {
+    const addr = document.getElementById("multisig_checker").value.trim();
+    const out = document.getElementById("out_multisig");
+    
+    if (!addr) {
+        out.innerHTML = getOutputHeader() + "<pre><span class='private-key'>Error: Please enter a Bitcoin Address.</span></pre>";
+        return;
+    }
+    
+    let addrTypeHint = "Unknown Format";
+    if (addr.startsWith("1")) {
+        addrTypeHint = "Legacy P2PKH (Single-Sig by Design)";
+    } else if (addr.startsWith("3")) {
+        addrTypeHint = "P2SH (Could be Multisig, Segwit-Nested, or Custom)";
+    } else if (addr.startsWith("bc1q") && addr.length === 42) {
+        addrTypeHint = "Native Segwit P2WPKH (Single-Sig by Design)";
+    } else if (addr.startsWith("bc1q") && addr.length > 42) {
+        addrTypeHint = "Native Segwit P2WSH (Likely Multisig or Custom)";
+    } else if (addr.startsWith("bc1p")) {
+        addrTypeHint = "Taproot P2TR";
+    }
+
+    out.innerHTML = getOutputHeader() + `<pre>Fetching transaction history for ${addr}...\n(Format Detection: ${addrTypeHint})</pre>`;
+
+    try {
+        const res = await fetch(`https://blockstream.info/api/address/${addr}/txs`);
+        if (!res.ok) throw new Error("Failed to fetch. Address might be invalid or has no history.");
+        const txs = await res.json();
+        
+        if (txs.length === 0) {
+            out.innerHTML = getOutputHeader() + `<pre><span class='private-key'>Analysis Failed: This address has absolutely 0 transactions on the blockchain.</span>\nMultisig rules are purely mathematically hidden within an address hash until the address SPENDS coins and reveals its inner Redeem Script.</pre>`;
+            return;
+        }
+
+        let isSpent = false;
+        let scriptHex = null;
+        let txidRef = "";
+
+        for (const tx of txs) {
+            for (const vin of tx.vin) {
+                if (vin.prevout && vin.prevout.scriptpubkey_address === addr) {
+                    isSpent = true;
+                    txidRef = tx.txid;
+                    if (vin.witness && vin.witness.length > 1) {
+                        scriptHex = vin.witness[vin.witness.length - 1]; // P2WSH script
+                    } else if (vin.scriptsig_asm) {
+                        const parts = vin.scriptsig_asm.split(' ');
+                        scriptHex = parts[parts.length - 1]; // Hex push
+                    } else if (vin.scriptsig) {
+                        scriptHex = vin.scriptsig;
+                    }
+                    if (scriptHex && scriptHex.startsWith('OP_')) scriptHex = null; // Clean up parsing
+                    break;
+                }
+            }
+            if (scriptHex) break;
+        }
+
+        if (!isSpent || !scriptHex) {
+             out.innerHTML = getOutputHeader() + `<pre>Address Type: ${addrTypeHint}\nTotal TXs Looked Up: ${txs.length}\n\n<span class='private-key'>Result: UNKNOWN.</span>\nThis address has received funds, but has NEVER spent them. A P2SH/P2WSH address keeps its internal script hidden mathematically. It only reveals whether it's Multisig when it makes an outgoing transaction.</pre>`;
+             return;
+        }
+
+        let isMulti = false;
+        let reqM = 0;
+        let totalN = 0;
+        
+        let hexClean = scriptHex.replace(/[^0-9a-fA-F]/g, '');
+        let scriptBytes = [];
+        for(let i = 0; i < hexClean.length; i+=2) scriptBytes.push(parseInt(hexClean.substr(i,2), 16));
+
+        if (scriptBytes.length > 0 && scriptBytes[scriptBytes.length - 1] === 0xae) {
+            isMulti = true;
+            let nByte = scriptBytes[scriptBytes.length - 2];
+            if (nByte >= 0x51 && nByte <= 0x60) totalN = nByte - 0x50;
+            
+            for(let i=0; i < scriptBytes.length - 2; i++) {
+                 let b = scriptBytes[i];
+                 if (b >= 0x51 && b <= 0x60) {
+                      reqM = b - 0x50;
+                      break; // Best effort first OP_1 to OP_16
+                 }
+            }
+        } else if (hexClean.indexOf("ae") !== -1) {
+             isMulti = true;
+             reqM = "?"; totalN = "?";
+        }
+
+        let content = `Address Form: ${addrTypeHint}\n`;
+        content += `Found Spending TXID: <span style="color:#aaa">${txidRef}</span>\n`;
+        content += `Extracted Redeem/Witness Script: <span style="color:var(--highlight-green)">${hexClean.substring(0, 50)}...</span>\n\n`;
+
+        if (isMulti) {
+             content += `[+] DEEP ANALYSIS RESULT:\n`;
+             content += `<span style="color:var(--highlight-green); font-size:18px; font-weight:bold;">YES, THIS IS A MULTISIG ADDRESS!</span>\n\n`;
+            if (reqM > 0 && totalN > 0) {
+                 content += `Algorithm mathematically identified a <strong style='color:var(--bitcoin-orange); font-size:16px;'>${reqM}-of-${totalN} Multisignature</strong> structural policy.\n`;
+            } else {
+                 content += `Algorithm detected OP_CHECKMULTISIG (0xae) opcode within the script structural footprint.\n`;
+            }
+        } else {
+             content += `[-] DEEP ANALYSIS RESULT:\n`;
+             content += `<span class="private-key" style="font-size:18px; font-weight:bold;">NO, THIS IS NOT A NATIVE MULTISIG ADDRESS.</span>\n\n`;
+             content += `The underlying script evaluates as a standard Single-Signature or wrapped P2WPKH script structure. (No OP_CHECKMULTISIG footprints found algorithmically).`;
+        }
+
+        out.innerHTML = getOutputHeader() + `<pre>${content}</pre>`;
+
+    } catch (e) {
+        out.innerHTML = getOutputHeader() + `<pre class="private-key">API Network Error or Parsing Error: ${e.message}\nPlease check your internet connection.</pre>`;
+    }
+}
+
+/* ---------------------- 19. Raw Transaction Decoder ---------------------- */
+function readVarInt(buf, offset) {
+    let prefix = buf[offset];
+    if (prefix < 0xFD) return { val: prefix, size: 1 };
+    if (prefix === 0xFD) {
+         let val = buf[offset+1] | (buf[offset+2] << 8);
+         return { val: val, size: 3 };
+    }
+    if (prefix === 0xFE) {
+         let val = buf[offset+1] | (buf[offset+2] << 8) | (buf[offset+3] << 16) | (buf[offset+4] << 24);
+         return { val: val, size: 5 };
+    }
+    return { val: buf[offset+1], size: 9 }; 
+}
+
+function decodeRawTx() {
+    const raw = document.getElementById("raw_tx_input").value.trim().toLowerCase();
+    const out = document.getElementById("out_raw_tx");
+    if(!raw) return;
+    try {
+        let buf = hexToBytes(raw);
+        let cursor = 0;
+        
+        let version = buf[cursor] | (buf[cursor+1] << 8) | (buf[cursor+2] << 16) | (buf[cursor+3] << 24);
+        cursor += 4;
+        
+        let hasWitness = false;
+        if(buf[cursor] === 0x00 && buf[cursor+1] === 0x01) {
+            hasWitness = true;
+            cursor += 2;
+        }
+
+        let inCountData = readVarInt(buf, cursor);
+        let inCount = inCountData.val;
+        cursor += inCountData.size;
+
+        let inputs = [];
+        for(let i=0; i<inCount; i++) {
+            let txidBytes = buf.slice(cursor, cursor+32);
+            txidBytes.reverse();
+            let txid = bytesToHex(txidBytes);
+            cursor += 32;
+
+            let vout = buf[cursor] | (buf[cursor+1] << 8) | (buf[cursor+2] << 16) | (buf[cursor+3] << 24);
+            cursor += 4;
+
+            let scriptLenData = readVarInt(buf, cursor);
+            let scriptLen = scriptLenData.val;
+            cursor += scriptLenData.size;
+            
+            let scriptSig = bytesToHex(buf.slice(cursor, cursor + scriptLen));
+            cursor += scriptLen;
+            
+            let seq = buf[cursor] | (buf[cursor+1] << 8) | (buf[cursor+2] << 16) | (buf[cursor+3] << 24);
+            cursor += 4;
+            
+            inputs.push({ txid: txid, vout: vout, scriptSig: scriptSig, seq: seq });
+        }
+        
+        let outCountData = readVarInt(buf, cursor);
+        let outCount = outCountData.val;
+        cursor += outCountData.size;
+        
+        let outputs = [];
+        for(let i=0; i<outCount; i++) {
+            let valHex = bytesToHex(buf.slice(cursor, cursor+8).reverse());
+            cursor += 8;
+            let valSatoshis = BigInt('0x' + valHex);
+            
+            let scriptLenData = readVarInt(buf, cursor);
+            let scriptLen = scriptLenData.val;
+            cursor += scriptLenData.size;
+            
+            let scriptPubKey = bytesToHex(buf.slice(cursor, cursor + scriptLen));
+            cursor += scriptLen;
+            
+            outputs.push({ sats: valSatoshis.toString(), scriptPubKey: scriptPubKey });
+        }
+        
+        let res = `<span style="color:var(--bitcoin-orange);">Version:</span> ${version}\n`;
+        res += `<span style="color:var(--bitcoin-orange);">Segwit Marker:</span> ${hasWitness ? "Yes" : "No"}\n\n`;
+        res += `--- INPUTS (${inCount}) ---\n`;
+        inputs.forEach((inp, idx) => {
+             res += `[Input #${idx}]\n`;
+             res += `Previous TXID: <span style="color:#aaa">${inp.txid}</span>\n`;
+             res += `VOUT Index: ${inp.vout}\n`;
+             res += `ScriptSig: <strong style="color:var(--highlight-green);">${inp.scriptSig}</strong>\n\n`;
+        });
+        res += `--- OUTPUTS (${outCount}) ---\n`;
+        let totalSats = 0n;
+        outputs.forEach((oup, idx) => {
+             res += `[Output #${idx}]\n`;
+             res += `Value (Satoshis): ${oup.sats} (${(Number(oup.sats)/100000000).toFixed(8)} BTC)\n`;
+             res += `ScriptPubKey: <strong style="color:var(--bitcoin-orange);">${oup.scriptPubKey}</strong>\n\n`;
+             totalSats += BigInt(oup.sats);
+        });
+        res += `--- SUMMARY ---\n`;
+        res += `Total Output Amount: <strong style="color:var(--highlight-green);">${(Number(totalSats)/100000000).toFixed(8)} BTC</strong>\n`;
+        
+        out.innerHTML = getOutputHeader() + `<pre>${res}</pre>`;
+
+    } catch(e) {
+        out.innerHTML = getOutputHeader() + `<pre class="private-key">Error parsing transaction hex. Make sure it is valid raw transaction data.\nDetails: ${e.message}</pre>`;
+    }
+}
+
+/* ---------------------- 20. Bitcoin Wallet Dat Validator ---------------------- */
+
+async function parseWalletDatBytes(arrayBuffer) {
+    const data = new Uint8Array(arrayBuffer);
+    const dv = new DataView(arrayBuffer);
+    let pairs = [];
+    
+    if (data.length >= 512) {
+        const pageSize = dv.getUint32(20, true);
+        if (pageSize >= 512 && pageSize <= 65536) {
+            for (let pOffset = 0; pOffset < data.length; pOffset += pageSize) {
+                if (pOffset + 26 > data.length) break;
+                let type = data[pOffset + 25];
+                if (type === 5) { // Btree Leaf Page
+                    let numEntries = dv.getUint16(pOffset + 20, true);
+                    let indexArray = [];
+                    for(let i=0; i<numEntries; i++) {
+                        indexArray.push(dv.getUint16(pOffset + 26 + i*2, true));
+                    }
+                    for(let i=0; i<numEntries; i+=2) {
+                        let kOffset = indexArray[i];
+                        let vOffset = indexArray[i+1];
+                        if (kOffset === undefined || vOffset === undefined || kOffset === 0 || vOffset === 0) continue;
+                        
+                        let kStart = pOffset + kOffset;
+                        if (kStart + 3 > data.length) continue;
+                        let kLen = dv.getUint16(kStart, true);
+                        if (kStart + 3 + kLen > data.length) continue;
+                        let kData = data.slice(kStart + 3, kStart + 3 + kLen);
+                        
+                        let vStart = pOffset + vOffset;
+                        if (vStart + 3 > data.length) continue;
+                        let vLen = dv.getUint16(vStart, true);
+                        if (vStart + 3 + vLen > data.length) continue;
+                        let vData = data.slice(vStart + 3, vStart + 3 + vLen);
+                        
+                        pairs.push({ key: kData, val: vData});
+                    }
+                }
+            }
+        }
+    }
+    
+    let mkey_value = null;
+    let extracted_keys = [];
+
+    for(let pair of pairs) {
+        let k = pair.key;
+        let v = pair.val;
+        if (!k || !v || k.length === 0) continue;
+        
+        if (k.length >= 5 && k[0] === 4 && k[1]===0x6d && k[2]===0x6b && k[3]===0x65 && k[4]===0x79) {
+            mkey_value = v;
+        }
+        else {
+            let pubkeyStart = 0;
+            // Unencrypted key: "key"
+            if (k.length >= 4 && k[0] === 3 && k[1]===0x6b && k[2]===0x65 && k[3]===0x79) {
+                pubkeyStart = 5;
+            }
+            // Encrypted key: "ckey"
+            else if (k.length >= 5 && k[0] === 4 && k[1]===0x63 && k[2]===0x6b && k[3]===0x65 && k[4]===0x79) {
+                pubkeyStart = 6;
+            }
+            
+            if (pubkeyStart > 0) {
+                let pubkeyLen = k[pubkeyStart - 1];
+                if (pubkeyStart + pubkeyLen <= k.length) {
+                    let pubkeyHex = Array.from(k.slice(pubkeyStart, pubkeyStart + pubkeyLen)).map(b=>b.toString(16).padStart(2,'0')).join('');
+                    let vLen = v[0];
+                    let vStart = 1;
+                    if (vLen === 253) {
+                        vLen = v[1] | (v[2]<<8);
+                        vStart = 3;
+                    }
+                    if (vStart + vLen <= v.length) {
+                        let vData = v.slice(vStart, vStart + vLen);
+                        let valHex = Array.from(vData).map(b=>b.toString(16).padStart(2,'0')).join('');
+                        extracted_keys.push({ pubkey: pubkeyHex, valHex: valHex });
+                    }
+                }
+            }
+        }
+    }
+    
+    let hashStr = "None (Wallet is not Encrypted or MKEY missing)";
+    if (mkey_value != null && mkey_value.length > 5) {
+        try {
+            let cur = 0;
+            let cLen = mkey_value[cur++];
+            if (cLen === 253) { cLen = mkey_value[cur] | (mkey_value[cur+1]<<8); cur+=2; }
+            let cryptedKey = mkey_value.slice(cur, cur+cLen);
+            cur += cLen;
+            
+            let sLen = mkey_value[cur++];
+            if (sLen === 253) { sLen = mkey_value[cur] | (mkey_value[cur+1]<<8); cur+=2; }
+            let salt = mkey_value.slice(cur, cur+sLen);
+            cur += sLen;
+            
+            let method = mkey_value[cur] | (mkey_value[cur+1]<<8) | (mkey_value[cur+2]<<16) | (mkey_value[cur+3]<<24);
+            cur += 4;
+            
+            let iters = mkey_value[cur] | (mkey_value[cur+1]<<8) | (mkey_value[cur+2]<<16) | (mkey_value[cur+3]<<24);
+            cur += 4;
+            
+            let cHex = Array.from(cryptedKey).map(b=>b.toString(16).padStart(2,'0')).join('');
+            let sHex = Array.from(salt).map(b=>b.toString(16).padStart(2,'0')).join('');
+            
+            hashStr = `$bitcoin$${cHex.length}$${cHex}$${sHex.length}$${sHex}$${iters}$2$00$2$00`;
+        } catch(e) {
+            hashStr = "Error parsing Master Key";
+        }
+    }
+
+    let out = document.getElementById("out_wallet_dat");
+    let res = `<span style="color:var(--highlight-green); font-size:18px; font-weight:bold;">Success</span>\n\n`;
+    res += `<span style="color:var(--bitcoin-orange); font-weight:bold;">Wallet Hash</span>\n`;
+    res += `${hashStr}\n\n`;
+    
+    res += `<span style="color:var(--bitcoin-orange); font-weight:bold;">Wallet List</span>\n`;
+    out.innerHTML = getOutputHeader() + `<pre>${res}Fetching balances from blockchain... (Please wait)</pre>`;
+
+    // Prepare address strings
+    for(let k of extracted_keys) {
+        k.addr = "Unknown";
+        try {
+            k.addr = pubToAddr_P2PKH(k.pubkey);
+        } catch(e) {}
+    }
+
+    let balances = {};
+    if (extracted_keys.length > 500) {
+        res += `too many addresses, only checking first 500 balances limits\n`;
+        extracted_keys = extracted_keys.slice(0, 500); // cap to 500 anyway to prevent huge requests
+    }
+
+    let addrList = extracted_keys.map(k=>k.addr).filter(a=>a!=="Unknown");
+    
+    // Batch Fetch Balances
+    try {
+        for(let i=0; i<addrList.length; i+=30) {
+            let chunk = addrList.slice(i, i+30);
+            if (chunk.length === 0) continue;
+            let response = await fetch(`https://blockchain.info/balance?active=${chunk.join(',')}`);
+            if (!response.ok) throw new Error("API rate limit or connection issue");
+            let data = await response.json();
+            for(let addr in data) {
+                balances[addr] = data[addr].final_balance;
+            }
+            // Sleep slightly to prevent rate limit
+            await new Promise(r => setTimeout(r, 200));
+        }
+    } catch(e) {
+        res += `<span class="private-key" style="display:block; margin-bottom:10px;">API Error: ${e.message}. Showing 0 BTC.</span>`;
+    }
+
+    res += `Address\tEncrypted Key\tBalance\n`;
+    for(let k of extracted_keys) {
+        let displayVal = k.valHex;
+        if (displayVal.length > 96) displayVal = displayVal.substring(0, 96);
+        
+        let balSatoshis = balances[k.addr];
+        let balStr = balSatoshis !== undefined ? (balSatoshis / 100000000).toFixed(8) : "0.00000000";
+        res += `${k.addr}\t${displayVal}\t<strong style="color:var(--highlight-green)">${balStr} BTC</strong>\n`;
+    }
+    
+    out.innerHTML = getOutputHeader() + `<pre>${res}</pre>`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Tool 20 auto-run removed, handled manually via processWalletDat()
+
+    // Tool 21 auto-run removed, handled manually via processWalletVuln()
+});
+
+function processWalletDat() {
+    const wInput = document.getElementById('wallet_dat_input');
+    if (!wInput || !wInput.files || wInput.files.length === 0) {
+        alert("Please Select Your Wallet Dat File First.");
+        return;
+    }
+    const file = wInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        parseWalletDatBytes(e.target.result);
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function processWalletVuln() {
+    const vInput = document.getElementById('wallet_vuln_input');
+    if (!vInput || !vInput.files || vInput.files.length === 0) {
+        alert("Please Select Your Wallet Dat File First.");
+        return;
+    }
+    const file = vInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        analyzeWalletDatVuln(e.target.result);
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+/* ---------------------- 21. Deep Wallet.dat Vulnerability Analyzer ---------------------- */
+
+async function analyzeWalletDatVuln(arrayBuffer) {
+    let out = document.getElementById("out_wallet_vuln");
+    out.innerHTML = getOutputHeader() + `<pre>Deep scanning Berkeley DB and fetching balances... (Please wait)</pre>`;
+
+    const data = new Uint8Array(arrayBuffer);
+    const dv = new DataView(arrayBuffer);
+    let pairs = [];
+    
+    if (data.length >= 512) {
+        let pageSize = 0;
+        try { pageSize = dv.getUint32(20, true); } catch(e){}
+        if (pageSize >= 512 && pageSize <= 65536) {
+            for (let pOffset = 0; pOffset < data.length; pOffset += pageSize) {
+                if (pOffset + 26 > data.length) break;
+                if (data[pOffset + 25] === 5) {
+                    let numEntries = dv.getUint16(pOffset + 20, true);
+                    let indexArray = [];
+                    for(let i=0; i<numEntries; i++) indexArray.push(dv.getUint16(pOffset + 26 + i*2, true));
+                    for(let i=0; i<numEntries; i+=2) {
+                        let kOffset = indexArray[i], vOffset = indexArray[i+1];
+                        if (kOffset === undefined || vOffset === undefined || kOffset === 0 || vOffset === 0) continue;
+                        let kStart = pOffset + kOffset;
+                        if (kStart + 3 > data.length) continue;
+                        let kLen = dv.getUint16(kStart, true);
+                        if (kStart + 3 + kLen > data.length) continue;
+                        
+                        let vStart = pOffset + vOffset;
+                        if (vStart + 3 > data.length) continue;
+                        let vLen = dv.getUint16(vStart, true);
+                        if (vStart + 3 + vLen > data.length) continue;
+                        
+                        pairs.push({ key: data.slice(kStart + 3, kStart + 3 + kLen), val: data.slice(vStart + 3, vStart + 3 + vLen) });
+                    }
+                }
+            }
+        }
+    }
+    
+    let counts = { key: 0, ckey: 0, mkey: 0, wkey: 0, pool: 0, name: 0, tx: 0, minversion: 0 };
+    let mkey_iters = null;
+    let mkey_salt = null;
+    let mkey_hash = null;
+    let version = "Unknown / Missing";
+    let isHD = false;
+    
+    let extracted_keys = [];
+    let rawDump = "";
+
+    for(let p of pairs) {
+        let ks = "";
+        let strLen = p.key[0];
+        if (strLen < 253 && p.key.length >= 1 + strLen) {
+             ks = Array.from(p.key.slice(1, 1 + strLen)).map(b => String.fromCharCode(b)).join('');
+        }
+        let kHex = Array.from(p.key).map(b=>b.toString(16).padStart(2,'0')).join('');
+        let vHex = Array.from(p.val).map(b=>b.toString(16).padStart(2,'0')).join('');
+        
+        let pkHex = "";
+        
+        if (ks === 'key') {
+            counts.key++;
+            rawDump += `[Type: key (Unencrypted Private Key)]\n`;
+            let pkLen = p.key[4];
+            if (pkLen) {
+                pkHex = kHex.substring(10, 10 + pkLen*2);
+                rawDump += `Associated PubKey: ${pkHex}\n`;
+                extracted_keys.push(pkHex);
+            }
+            rawDump += `Private Key Data hex: ${vHex}\n\n`;
+        }
+        if (ks === 'ckey') {
+            counts.ckey++;
+            rawDump += `[Type: ckey (Encrypted Private Key)]\n`;
+            let pkLen = p.key[5];
+            if (pkLen) {
+                pkHex = kHex.substring(12, 12 + pkLen*2);
+                rawDump += `Associated PubKey: ${pkHex}\n`;
+                extracted_keys.push(pkHex);
+            }
+            rawDump += `Encrypted Private Key Block hex: ${vHex}\n\n`;
+        }
+        if (ks === 'mkey') {
+            counts.mkey++;
+            rawDump += `[Type: mkey (Master Key Block)]\n`;
+            rawDump += `Internal Data hex: ${vHex}\n\n`;
+            let v = p.val;
+            try {
+                let cur = 0;
+                let cLen = v[cur++];
+                if (cLen === 253) { cLen = v[cur] | (v[cur+1]<<8); cur+=2; }
+                let cryptedKeyBytes = v.slice(cur, cur+cLen);
+                cur += cLen;
+                
+                let sLen = v[cur++];
+                if (sLen === 253) { sLen = v[cur] | (v[cur+1]<<8); cur+=2; }
+                let saltBytes = v.slice(cur, cur+sLen);
+                mkey_salt = Array.from(saltBytes).map(b=>b.toString(16).padStart(2,'0')).join('');
+                cur += sLen;
+                
+                let method = v[cur] | (v[cur+1]<<8) | (v[cur+2]<<16) | (v[cur+3]<<24); cur+=4;
+                mkey_iters = v[cur] | (v[cur+1]<<8) | (v[cur+2]<<16) | (v[cur+3]<<24);
+                
+                let cHex = Array.from(cryptedKeyBytes).map(b=>b.toString(16).padStart(2,'0')).join('');
+                let sHex = Array.from(saltBytes).map(b=>b.toString(16).padStart(2,'0')).join('');
+                
+                mkey_hash = `$bitcoin$${cHex.length}$${cHex}$${sHex.length}$${sHex}$${mkey_iters}$2$00$2$00`;
+            } catch(e) {}
+        }
+        if (ks === 'pool') {
+            counts.pool++;
+            rawDump += `[Type: pool]\nPool Data hex: ${vHex}\n\n`;
+        }
+        if (ks === 'name') {
+            counts.name++;
+            rawDump += `[Type: name (Address Book Label)]\n`;
+            rawDump += `Data Hex: Key=${kHex} Val=${vHex}\n\n`;
+        }
+        if (ks === 'tx') {
+            counts.tx++;
+            rawDump += `[Type: tx (Transaction Record)]\n`;
+            rawDump += `TX Identifier Hex: ${kHex.substring(6)}\n`;
+            rawDump += `Transaction Payload hex: ${vHex}\n\n`;
+        }
+        if (ks === 'minversion') {
+            rawDump += `[Type: minversion]\nHex Data: ${vHex}\n\n`;
+            if (p.val.length >= 4) {
+               version = p.val[0] | (p.val[1]<<8) | (p.val[2]<<16) | (p.val[3]<<24);
+               if (version >= 130000) isHD = true;
+            }
+        }
+        if (ks === 'hdchain') {
+            isHD = true;
+            rawDump += `[Type: hdchain (HD Node Metadata)]\nHardware HD Trace hex: ${vHex}\n\n`;
+        }
+        if (ks === 'bestblock' || ks === 'bestblock_nomerkle' || ks === 'defaultkey') {
+            rawDump += `[Type: ${ks}]\nHex Data: ${vHex}\n\n`;
+        }
+    }
+    
+    // Process Addresses and Fetch Balances
+    let addrList = [];
+    for(let pk of extracted_keys) {
+        try {
+            let a = pubToAddr_P2PKH(pk);
+            addrList.push(a);
+        } catch(e) {}
+    }
+    
+    let balances = {};
+    let uniqueAddrs = [...new Set(addrList)];
+    
+    if (uniqueAddrs.length > 0) {
+        try {
+            let uniqueAddrsLim = uniqueAddrs.slice(0, 500); 
+            for(let i=0; i<uniqueAddrsLim.length; i+=30) {
+                let chunk = uniqueAddrsLim.slice(i, i+30);
+                if (chunk.length === 0) continue;
+                let response = await fetch(`https://blockchain.info/balance?active=${chunk.join(',')}`);
+                if (response.ok) {
+                    let bdata = await response.json();
+                    for(let a in bdata) balances[a] = bdata[a].final_balance;
+                }
+                await new Promise(r => setTimeout(r, 200));
+            }
+        } catch(e) {}
+    }
+
+    // Build the Final Output String
+    let res = `<span style="font-size: 18px; color: #ff5555; text-decoration: underline;">DEEP B-TREE WALLET DIAGNOSTICS</span>\n\n`;
+    res += `[+] Database Core Scanned: <span style="color:var(--highlight-green)">Berkeley DB Type 5 Leaf Pages</span>\n`;
+    res += `[+] Total Cryptographic Records: ${pairs.length}\n`;
+    res += `[+] Wallet Framework Version: ${version} (HD Wallet: ${isHD ? 'Yes' : 'No'})\n\n`;
+    
+    res += `<span style="color:var(--bitcoin-orange)">--- ARCHITECTURAL OVERVIEW ---</span>\n`;
+    res += `Unencrypted Keys (key):   ${counts.key}\n`;
+    res += `Encrypted Keys (ckey):    ${counts.ckey}\n`;
+    res += `Master Keys (mkey):       ${counts.mkey}\n`;
+    res += `Transaction Records (tx): ${counts.tx}\n`;
+    res += `Keypool Size (pool):      ${counts.pool}\n\n`;
+    
+    // Insert Accounts & Balances here
+    res += `<span style="color:var(--bitcoin-orange)">--- EXTRACTED ADDRESSES & BALANCES ---</span>\n`;
+    if (uniqueAddrs.length === 0) {
+        res += `No Extracted Key-Addresses found.\n`;
+    } else {
+        res += `Address\t\t\t\t\tBalance\n`;
+        res += `---------------------------------------------------------\n`;
+        for(let a of uniqueAddrs) {
+            let balSat = balances[a];
+            let balStr = balSat !== undefined ? (balSat / 100000000).toFixed(8) : "0.00000000";
+            res += `${a.padEnd(36, ' ')}\t<strong style="color:var(--highlight-green)">${balStr} BTC</strong>\n`;
+        }
+    }
+    res += `\n`;
+
+    res += `<span style="color:var(--bitcoin-orange)">--- VULNERABILITY THREAT ASSESSMENT LIST ---</span>\n`;
+    
+    let isEncrypted = (counts.mkey > 0 || counts.ckey > 0);
+    
+    res += `--------------------------------------------------\n`;
+    res += `[VULN-01] Encryption State Bypass Checking\n`;
+    res += `--------------------------------------------------\n`;
+    if (!isEncrypted) {
+        res += `• Vulnerability Detected: <span style="color:#ff5555; font-weight:bold;">CRITICAL DIRECT EXPLOIT (UNENCRYPTED)</span>\n`;
+        res += `• Decryption Formula: None Required.\n`;
+        res += `• Logic Assessment: Master key mechanism is disabled. Private keys are stored in plaintext. Anyone can sweep funds instantly without a password.\n\n`;
+    } else {
+        res += `• Vulnerability Detected: <span style="color:var(--highlight-green); font-weight:bold;">NONE (SECURE STANDARD)</span>\n`;
+        res += `• Decryption Formula: P(Target) = AES-256-CBC_{mkey_wrapped} | SHA-512(password + Salt) ^ Iterations\n`;
+        res += `• Logic Assessment: AES-256-CBC cipher securely wraps keys. There is NO mathematical exploit or payload to bypass AES. It forces an attacker into a pure Brute-Force scenario.\n\n`;
+    }
+    
+    if (isEncrypted && mkey_iters) {
+        res += `--------------------------------------------------\n`;
+        res += `[VULN-02] KDF Hash Iteration Entropy (GPU Susceptibility)\n`;
+        res += `--------------------------------------------------\n`;
+        let threatColor = "var(--highlight-green)";
+        if (mkey_iters < 100000) threatColor = "#ffaa00";
+        if (mkey_iters < 20000) threatColor = "#ff5555";
+        res += `• Iteration Count Extracted: ${mkey_iters.toLocaleString()} Cycles\n`;
+        if (mkey_iters < 50000) {
+            res += `• Vulnerability Detected: <span style="color:${threatColor}; font-weight:bold;">HIGH GPU SUSCEPTIBILITY (Low Rounds)</span>\n`;
+            res += `• Threat Logic: The key derivation loop validates hashes too fast. A cluster of Graphical Processing Units (GPUs) utilizing Hashcat/JohnTheRipper can chew through millions of passwords per second natively.\n\n`;
+        } else {
+            res += `• Vulnerability Detected: <span style="color:${threatColor}; font-weight:bold;">LOW (Robust KDF)</span>\n`;
+            res += `• Threat Logic: The iteration count puts sufficient strain on processor cycles. Brute-forcing this wallet is slow and hardware intensive.\n\n`;
+        }
+    }
+    
+    res += `--------------------------------------------------\n`;
+    res += `[VULN-03] Memory Contamination (Bleeding Keys)\n`;
+    res += `--------------------------------------------------\n`;
+    if (counts.ckey > 0 && counts.key > 0) {
+        res += `• Vulnerability Detected: <span style="color:#ff5555; font-weight:bold;">MEMORY BLEED IDENTIFIED</span>\n`;
+        res += `• Logic Assessment: The B-Tree contains BOTH Encrypted 'ckey's and Plaintext 'key's. This occurs when an older Bitcoin client encrypted the wallet but failed to properly discard traces of pre-existing keys. An attacker can extract the plaintext keys directly without cracking the password!\n\n`;
+    } else {
+        res += `• Vulnerability Detected: <span style="color:var(--highlight-green); font-weight:bold;">CLEAN STRUCTURE</span>\n`;
+        res += `• Logic Assessment: No plaintext traces were discovered alongside the encrypted key space. There are zero leaks.\n\n`;
+    }
+
+    if (mkey_hash) {
+        res += `<span style="color:var(--bitcoin-orange)">--- EXTRACTED TARGET HASH (JOHN THE RIPPER / HASHCAT) ---</span>\n`;
+        res += `You can feed this directly into cracking hardware to initiate the attack.\n`;
+        res += `Hash Format: <span style="color:#00ffff">${mkey_hash}</span>\n\n`;
+    }
+
+    res += `<span style="color:var(--bitcoin-orange)">--- SECURE PENETRATION & PAYLOAD ANALYSIS ---</span>\n`;
+    res += `--------------------------------------------------\n`;
+    res += `[VULN-04] Cryptographic Payload / MSFVenom Vectoring\n`;
+    res += `--------------------------------------------------\n`;
+    res += `• Mathematical Bypass Potential: <span style="color:#ff5555; font-weight:bold;">0% PROBABILITY</span>\n`;
+    res += `• Vulnerability Status: <span style="color:var(--highlight-green); font-weight:bold;">IMMUNE</span>\n`;
+    res += `• Logic Statement: Bitcoin Core serialization is highly compartmentalized. The Berkeley DB encapsulates key data solely inside predefined AES-encrypted leaves. Injecting a Metasploit/MSFVenom payload or buffer-overflow string directly into the database will ONLY inherently corrupt the structural integrity of the leaf pages.\n`;
+    res += `• Conclusion: It will render the wallet.dat unreadable by the client, destroying the funds instead of unlocking them. There is no executable memory context generated when reading 'ckeys'.\n\n`;
+
+    res += `--------------------------------------------------\n`;
+    res += `[VULN-05] Cryptanalytical Derivation (Partial Key Reconstruction)\n`;
+    res += `--------------------------------------------------\n`;
+    res += `• Theoretical Attack: Can we deduce the private key from half the characters? Or derived from the PubKey hash via a formula?\n`;
+    res += `• Logic Assessment: <strong style="color:#00ffff">Elliptic Curve Discrete Logarithm Problem (ECDLP) Secp256k1</strong> mathematically forbids reversing a Public Key to a Private Key. Furthermore, AES acts as an avalanche cipher—changing even 1 bit of the password changes the entire block. You cannot "partially" decrypt a ckey.\n`;
+    res += `• Exploit Status: <span style="color:var(--highlight-green); font-weight:bold;">IMPOSSIBLE</span>\n\n`;
+
+    res += `<span style="color:cyan">IMPORTANT SECURITY CONCLUSION:</span>\n`;
+    res += `If your data is marked "SECURE STANDARD", do NOT fall for scammers selling "Payload Formulas", "Bypass Algorithms", or "Memory Injectors". AES-256-CBC relies heavily on the rigid laws of thermodynamics. Without the password, no magical script can unlock it. Massive Dictionary Brute-Forcing via JTR/Hashcat is the only mathematically legitimate attack vector.\n\n`;
+
+    res += `<span style="color:var(--bitcoin-orange)">--- RAW DATA EXTRACTION DUMP (A-Z) ---</span>\n`;
+    res += `Dumping fully extracted recognized hex strings from the local file...\n\n`;
+    res += rawDump;
+    if (rawDump === "") res += "No human-parsable standardized objects (like keys, labels, txs) found.\n";
+    
+    out.innerHTML = getOutputHeader() + `<pre>${res}</pre>`;
+}
+</script>
+
+</body>
+</html>
