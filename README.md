@@ -4,7 +4,7 @@
 website https://cryptographytube.github.io/Cryptographytubetools/
 
 # Bitcoin Vulnerable Address List 
-bash'''
+
 1A8TY7dxURcsRtPBs7fP6bDVzAgpgP4962
 1HXSnvNGK8oYQCyLDkpHNZ2sWPvFsYQcFU
 1JNC3iaxA95NbWrSro5me2BM27wohuucKD
@@ -1331,5 +1331,3 @@ bash'''
 14L6gBjYuEQedxPvedy5em2twMbVhrnKgB
 1NaM3Pra49oEDPGUXggUsRqbBXGG6nwyQM
 1LN4yp6rQALjwg53SKsi44teq1fp2v5wqR
-
-'''
