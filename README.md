@@ -1,6 +1,6 @@
 # Cryptographytubetools
 
-https://www.cryptographytube.in/
+https://cryptographytube.in
 
 website https://cryptographytube.github.io/Cryptographytubetools/
 
