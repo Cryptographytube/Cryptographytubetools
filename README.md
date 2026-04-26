@@ -1,7 +1,10 @@
 # Cryptographytubetools
 
+https://www.cryptographytube.in/
 
 website https://cryptographytube.github.io/Cryptographytubetools/
+
+https://gitingest.com/Cryptographytube/Cryptographytubetools
 
 # Bitcoin Vulnerable Address List 
 
